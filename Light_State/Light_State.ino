@@ -28,7 +28,7 @@ void turnoffLed(T firstLedname,Args... args) {
 
 void loop() {
   
-  while (true){
+  //while (true){
 
     int magneticOutput = digitalRead(magneticPin); //to read if the magnetic sensors has an output
 
@@ -57,5 +57,5 @@ void loop() {
     digitalWrite(runningLed, HIGH); 
 
 
-  }
+  //}
 }
