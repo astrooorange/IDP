@@ -3,8 +3,8 @@
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the motor shield object with the default I2C address
 
-Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(1); // Motor on port M1
-Adafruit_DCMotor *myMotorRight = AFMS.getMotor(2); // Another motor on port M2
+Adafruit_DCMotor *myMotorLeft = AFMS.getMotor(3); // Motor on port M1
+Adafruit_DCMotor *myMotorRight = AFMS.getMotor(4); // Another motor on port M2
 
 
 int buttonPin = 8; //Pin 8 for button
@@ -35,10 +35,10 @@ void turningLeftCorner(){
   myMotorLeft->run(FORWARD); // starts the wheels to spinnnnn
   myMotorRight->run(FORWARD);
 
-    unsigned long startTime; // Variable to store the start time
+  unsigned long startTime=millis(); // Variable to store the start time
   unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
 
-  while(currentTime - startTime < runDuration){
+  while(millis() - startTime < runDuration){
     }
 
   myMotorLeft->run(RELEASE);
@@ -47,15 +47,15 @@ void turningLeftCorner(){
 
 void turningRightCorner(){ 
 
-  myMotorLeft->setSpeed(175); // Sets inner wheel to a lower speed
-  myMotorRight->setSpeed(50); // Sets outer wheel to a greater speed
+  myMotorLeft->setSpeed(255); // Sets inner wheel to a lower speed
+  myMotorRight->setSpeed(0); // Sets outer wheel to a greater speed
   myMotorLeft->run(FORWARD); // starts the wheels to spinnnnn
   myMotorRight->run(FORWARD);
 
-    unsigned long startTime; // Variable to store the start time
-  unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
+  unsigned long startTime=millis(); // Variable to store the start time
+  unsigned long runDuration = 1710 ; // time we want the program to run for (in milliseconds)
 
-  while(currentTime - startTime < runDuration){
+  while(millis() - startTime < runDuration){
     }
 
   myMotorLeft->run(RELEASE);
@@ -66,29 +66,40 @@ void turningRightCorner(){
 void loop() {
   uint8_t i;
 
+  while (digitalRead(buttonPin) == LOW) {
+  }
+  /*
   //while digitalRead(butonPin) == LOW;
     myMotorLeft->run(FORWARD);
     myMotorRight->run(FORWARD);
-    for (i=0; i<150; i++) {
-      myMotorLeft->setSpeed(i);
-      myMotorRight->setSpeed(i);
+    myMotorLeft->setSpeed(200);
+    myMotorRight->setSpeed(200);
+    //for (i=0; i<255; i++) {
+    //  myMotorLeft->setSpeed(i);
+    //  myMotorRight->setSpeed(i);
       
-    }
+    //}
   
-    delay(5000);
+    delay(2000);
 
-    myMotorLeft->run(FORWARD); // maybe practice with just releasing instead of slowing down and what the difference is? ->run(RELEASE)
-    myMotorRight->run(FORWARD);
-    for (i=150; i!=0; i--) {
-      myMotorLeft->setSpeed(i);
-      myMotorRight->setSpeed(i);
+    //myMotorLeft->run(FORWARD); // maybe practice with just releasing instead of slowing down and what the difference is? ->run(RELEASE)
+    //myMotorRight->run(FORWARD);
+    //for (i=255; i!=0; i--) {
+    //  myMotorLeft->setSpeed(i);
+    //  myMotorRight->setSpeed(i);
+    //}
+    delay(10);
+    myMotorLeft->run(RELEASE); 
+    myMotorRight->run(RELEASE);
+    */
+    //turningLeftCorner();  //Test the functions to alter/find the variables to get an accurate 90 degrees turn
+    turningRightCorner(); 
 
-    //turningLeftCorner()   //Test the functions to alter/find the variables to get an accurate 90 degrees turn
-    //turningRightCorner() 
 
-
-    break  
     //}
 
-
+// Doesnt matter the like loop up , only keep it for turning /line following . Also just keep general speed like 200. (225 is max but it seems like fast enough)
+// Seems like biggest problem will just be weight distribution :)
+// Also to stop just do -> run(RELEASE) cos it just works, dont overthink it.
+// this turning values/variable change with weight distribution so need to pay attention to that
 }
