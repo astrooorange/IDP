@@ -1,11 +1,13 @@
 #include <Adafruit_MotorShield.h>
 //#include <List.hpp>
 
-int sr=4;  // sensor right (of the three in a row)
-int sr1= 7 ; //sensor top right
-int sl=5;    //sensor left (of the three in a row)
-int sl1 = 8;  //sensor top left
-int sm=6;   //sensor middle (of the three)
+int sr = 4;  // pin for sensor right (of the three in a row)
+int sr1 = 7 ; // pin for sensor top right
+int sl = 5;    // pin for sensor left (of the three in a row)
+int sl1 = 8;  // pin for sensor top left
+int sm = 6;   // pin for sensor middle (of the three)
+int pe_sensor_pin = 9; // pin for photo electric sensor
+int button_pin = 3; // pin for button 
 
 //int magneticSensor = 3; 
 
@@ -14,6 +16,7 @@ int svr1 = 0;
 int svl = 0;
 int svl1 = 0;
 int svm = 0;
+int pe_sensor_value = 0;
 
 int vspeed= 225;  //default values of motor????
 int tspeed = 0;
@@ -44,7 +47,12 @@ void setup()
  pinMode(sm,INPUT);
  pinMode(sl1,INPUT);
  pinMode(sr1,INPUT);
- //pinMode(magneticOutput,INPUT)
+
+ pinMode(pe_sensor_pin,INPUT);      //Setting up Photo Electric Sensor
+ //pinMode(magneticOutput,INPUT)        //Setting up Magnetic Sensor
+
+ pinMode(button_pin, INPUT);      //Setting up button
+
  Serial.begin(9600);           // set up Serial library at 9600 bps
  //Serial.println("Adafruit Motorshield v2 - DC Motor test!");        //REMOVE?
 
@@ -58,12 +66,16 @@ void setup()
   while (1);
   }
  Serial.println("Motor Shield found.");
- mr->setSpeed(150); //just testing that the motor shield is connected and that the motor can move
+ /*mr->setSpeed(150); //just testing that the motor shield is connected and that the motor can move
  mr->run(FORWARD);
  mr->run(RELEASE);
  ml->setSpeed(150);
  ml->run(FORWARD);
- ml->run(RELEASE);
+ ml->run(RELEASE);*/
+
+ while (digitalRead(button_pin) == LOW) // so code only starts once the button is pressed [most likely get rid of this in the final code]
+ {}
+
 }
 
 //
@@ -200,7 +212,24 @@ void chassis_dropoff_fromR(){
 }
 */
 
+
+/*void object_detection(){
+  sensorValue = digitalRead(pe_sensor_pin);
+  if (sensorValue == HIGH)
+  {
+    Serial.println("nothing"); //need to add 
+  }
+  if (sensorValue == LOW)
+  {
+    Serial.println("detected");
+  }
+  delay(50);
+}
+*/
+
+
 int getout = 0;
+
 
 void loop()
 {
@@ -215,63 +244,63 @@ void loop()
     getout+=1;
   }
 
- svr=digitalRead(sr); // reading all the sensors
- svl=digitalRead(sl);
- svm =digitalRead(sm);
- svr1 = digitalRead(sr1);
- svl1 = digitalRead(sl1);
- Serial.print(svl); // printing the sensor values to help debug
- Serial.print(svm);
- Serial.print(svr);
- Serial.print(svr1);
+svr=digitalRead(sr); // reading all the sensors
+svl=digitalRead(sl);
+svm =digitalRead(sm);
+svr1 = digitalRead(sr1);
+svl1 = digitalRead(sl1);
+Serial.print(svl); // printing the sensor values to help debug
+Serial.print(svm);
+Serial.print(svr);
+Serial.print(svr1);
 
 
   // forward
- if ((svr == LOW && svm == HIGH && svl == LOW) || (svr == HIGH && svm == HIGH && svl == HIGH))
- {
+if ((svr == LOW && svm == HIGH && svl == LOW) || (svr == HIGH && svm == HIGH && svl == HIGH))
+{
   chassis_forward();
- }
+}
 
- //turn left
- if (svr == LOW && svm == HIGH && svl == HIGH)
- {
+//turn left
+if (svr == LOW && svm == HIGH && svl == HIGH)
+{
   chassis_turn_left();
- }
+}
 
- // super left
- if (svr == LOW && svm == LOW && svl == HIGH)
- {
-   chassis_turn_super_left();
-   }
+// super left
+if (svr == LOW && svm == LOW && svl == HIGH)
+{
+  chassis_turn_super_left();
+  }
 
- //turn right
+//turn right
   if (svr == HIGH && svm == HIGH && svl == LOW)
- {
+{
   chassis_turn_right();
- }
+}
 
- // super right
- if (svr == HIGH && svm == LOW && svl == LOW)
- {
-   chassis_turn_super_right();
-   }
+// super right
+if (svr == HIGH && svm == LOW && svl == LOW)
+{
+  chassis_turn_super_right();
+  }
 
- //spin right
+//spin right
   if (svr == LOW && svm == LOW && svl == LOW)
- {
+{
   mr->run(BACKWARD);
   mr->setSpeed(spinspeed);
   ml->run(FORWARD);
   ml->setSpeed(spinspeed);
- }
+}
 
- 
+
 // 
   if (svr1 == HIGH or svl1 == HIGH ){
 
     if (arrayofPaths[current_Path][Turning_counter] == 1){
       if (current_Path == 0 && Turning_counter == 0 ){
-         delay(300);
+        delay(300);
       }
       chassis_turn_left90();
       Turning_counter+=1;
@@ -327,6 +356,7 @@ void loop()
   }
 
 }
+
 
 // this AND logic (below) is the same as the OR (above) so doesnt seem like there is any reason to run it twice (right?)
 
