@@ -9,13 +9,13 @@ int sm=6;   //sensor middle (of the three)
 
 //int magneticSensor = 3; 
 
-int svr=0;   //default values of sensors
+int svr = 0;   //default values of sensors
 int svr1 = 0;
-int svl=0;
+int svl = 0;
 int svl1 = 0;
-int svm=0;
+int svm = 0;
 
-int vspeed= 255;  //default values of motor????
+int vspeed= 225;  //default values of motor????
 int tspeed = 0;
 int spinspeed = 255;
 
@@ -29,7 +29,7 @@ int current_Path = 0;
 int Turning_counter = 0;
 //List<int> Node0to1 {0,0,1,2,0,2,2,2};
 
-int path0[] = {1,2,0,2,2,2};
+int path0[] = {1,2,0,2,99,2};
 int path1[] = {0,0,0,0,0};
 
 int* arrayofPaths[] = {path0,path1};
@@ -99,14 +99,17 @@ void chassis_turn_left (){
 void chassis_turn_super_left(){
   
   mr->setSpeed(vspeed);
-  ml->setSpeed(vspeed-50);
+  ml->setSpeed(vspeed-70);
   mr->run(FORWARD);
   ml->run(FORWARD);
 } 
 
 void chassis_turn_right (){
   /*for (int i=FORWARD; i>FORWARD-25 ; i-=5){ //slowly decreases speed down so its smoother
-    mr->setSpeed(i);}*/
+    mr->setSpeed(i);
+    if (==)
+    
+    }*/
 
   ml->setSpeed(vspeed);
   mr->setSpeed(vspeed-25);
@@ -119,19 +122,19 @@ void chassis_turn_right (){
 
 void chassis_turn_super_right(){
   ml->setSpeed(vspeed);
-  mr->setSpeed(vspeed-50);
+  mr->setSpeed(vspeed-70);
   mr->run(FORWARD);
   ml->run(FORWARD);
 } 
 
 void chassis_turn_left90(){
-  mr->setSpeed(75); // Sets inner wheel to a lower speed
-  ml->setSpeed(200); // Sets outer wheel to a greater speed
+  mr->setSpeed(210); // Sets inner wheel to a lower speed
+  ml->setSpeed(20); // Sets outer wheel to a greater speed
   mr->run(FORWARD); // starts the wheels to spinnnnn
   ml->run(FORWARD);
 
   unsigned long startTime=millis(); // Variable to store the start time
-  unsigned long runDuration = 3200 ; // time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 1950 ; // time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration){
     }
@@ -143,19 +146,20 @@ void chassis_turn_left90(){
 }
 
 void chassis_turn_right90(){
-  mr->setSpeed(200); // Sets inner wheel to a lower speed
-  ml->setSpeed(75); // Sets outer wheel to a greater speed
+  delay(35);
+  mr->setSpeed(30); // Sets inner wheel to a lower speed
+  ml->setSpeed(210); // Sets outer wheel to a greater speed
   mr->run(FORWARD); // starts the wheels to spinnnnn
   ml->run(FORWARD);
 
   unsigned long startTime=millis(); // Variable to store the start time
-  unsigned long runDuration = 3200 ; // time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 1920 ; // time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration){
-  }
+    }
+
   ml->run(RELEASE);
   mr->run(RELEASE);
-  
 }
 
 /*
@@ -222,7 +226,6 @@ void loop()
  Serial.print(svr1);
 
 
-
   // forward
  if ((svr == LOW && svm == HIGH && svl == LOW) || (svr == HIGH && svm == HIGH && svl == HIGH))
  {
@@ -267,6 +270,9 @@ void loop()
   if (svr1 == HIGH or svl1 == HIGH ){
 
     if (arrayofPaths[current_Path][Turning_counter] == 1){
+      if (current_Path == 0 && Turning_counter == 0 ){
+         delay(300);
+      }
       chassis_turn_left90();
       Turning_counter+=1;
     }
@@ -274,7 +280,7 @@ void loop()
       chassis_turn_right90();
       Turning_counter+=1;
     }
-
+  
     
     /*
     else if (arrayofPaths[current_Path][Turning_counter] == 3){
@@ -295,9 +301,27 @@ void loop()
     else if (arrayofPaths[current_Path][Turning_counter] == 6)
     */
 
-    else{
+    else if (arrayofPaths[current_Path][Turning_counter] == 0){
+
+      unsigned long startTime=millis(); // Variable to store the start time
+      unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
+
+      while(millis() - startTime < runDuration)
+      {
       chassis_forward();
+      }
+      
       Turning_counter+=1;
+    }
+
+    else{
+      //mr->setSpeed(0); // Sets inner wheel to a lower speed
+      //ml->setSpeed(0); // Sets outer wheel to a greater speed
+      ml -> run(RELEASE);
+      mr -> run(RELEASE);
+      while(true){  
+      }
+
     }
 
   }
