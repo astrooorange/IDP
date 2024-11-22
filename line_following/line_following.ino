@@ -18,7 +18,7 @@ int svl1 = 0;
 int svm = 0;
 int pe_sensor_value = 0;
 
-int vspeed= 225;  //default values of motor????
+int vspeed= 225;  //default values of motor //might want to change this back up if time is a problem and reduce this value if line following is really bad
 int tspeed = 0;
 int spinspeed = 255;
 
@@ -32,12 +32,15 @@ int current_Path = 0;
 int Turning_counter = 0;
 //List<int> Node0to1 {0,0,1,2,0,2,2,2};
 
-int path0[] = {1,2,0,2,99,2};
-int path1[] = {0,0,0,0,0};
+int path0[] = {1,2,0,2,99,3}; // once we finish the picking up object code the path should be {5,1,2,0,2,3}
+int path1[] = {5,2,2,2,3};
+int path2[] = {1,6,1,1,4};
+int path3[] = {1,2,2,6,0,2,0,2,3};
+int path4[] = {2,1,1,2}; // this just code returning the AGV back to the start box // we need to add some extra code to make it go into that final finish box maybe something like we did at the start to get it back in the boxxx
 
-int* arrayofPaths[] = {path0,path1};
+int* arrayofPaths[] = {path0,path1,path2,path3,path4};
 
-//so you want it to go on arrayofPaths[currentPath]
+//so you want it to go on arrayofPaths[currentPath][Turning_counter]
 
 
 void setup()
@@ -179,21 +182,23 @@ void dropoff_()
 
 
 void chassis_dropoff_fromL(){
-  //so put like code here on what to do when it reaches junction 8/ bit where it needs to consider drop off of the waste
-
-  if (digitalRead(magneticSensor)==HIGH){
+  //so put like code here on what to do when it reaches junction 8 / bit where it needs to consider drop off of the waste
+  
+  if (digitalRead(magneticSensor)==HIGH){ // i dont need to pass in svl1 into this function as parameters,right?
     
     chassis_turn_right90()
     delay(10)
-    chassis_forward()
-    while (sl1==LOW){
-      svl1 = digitalRead(sl1);
+    while (svr1==LOW){
+      svr1 = digitalRead(sr1);
+      chassis_forward()
     }
     chassis_turn_right90()
     dropoff() // this should just go forward drop off item then reverse back to the junction
     chassis_turn_left90()
-    chassis_forward()
-    while(sl1==LOW AND sr1 == LOW){
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
     }
 
     ml->run(RELEASE);
@@ -201,27 +206,161 @@ void chassis_dropoff_fromL(){
     
 
   }
-  else{
+  else if (digitalRead(magneticSensor) == LOW){
 
-    ....
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    chassis_turn_right90()
+    dropoff() // this should just go forward drop off item then reverse back to the junction
+    chassis_turn_right90()
+
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    chassis_turn_left90()
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    //this below is so it can drive past the junction (as we cant use the sensors as they are already ontop of the junction so it needs to just get past the junction to continue driving onto the next)
+    unsigned long startTime=millis(); // Variable to store the start time
+    unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
+    while(millis() - startTime < runDuration)
+    {
+    chassis_forward();
+    }
+
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    ml->run(RELEASE);
+    mr->run(RELEASE);
 
   }
+
+  else  // this code is just to catch any logical errors come up
+  {
+    ml -> run(RELEASE);
+    mr -> run(RELEASE);
+    while(true)
+    {}
+  }
+
+
 }
 
 void chassis_dropoff_fromR(){
+
+  if (digitalRead(magneticSensor)==HIGH){
+
+    //this below is so it can drive past the junction (as we cant use the sensors as they are already ontop of the junction so it needs to just get past the junction to continue driving onto the next)
+      
+    unsigned long startTime=millis(); // Variable to store the start time
+    unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
+    while(millis() - startTime < runDuration)
+    {
+      chassis_forward();
+    }
+
+    while((svl1==LOW) || (svr1 == LOW))
+    {
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    chassis_turn_left90()
+    while((svl1==LOW) || (svr1 == LOW))
+    {
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    chassis_turn_right90()
+    dropoff()~
+    chassist_turn_left90()
+    while((svl1==LOW) || (svr1 == LOW))
+    {
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+    
+  }
+  else if (digitalRead(magneticSensor) == LOW)
+  {
+    chassis_turn_left90()
+    dropoff()
+    chassis_turn_right90()
+
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    chassis_turn_left90()
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    //this below is so it can drive past the junction (as we cant use the sensors as they are already ontop of the junction so it needs to just get past the junction to continue driving onto the next)
+    unsigned long startTime=millis(); // Variable to store the start time
+    unsigned long runDuration = 1000 ; // time we want the program to run for (in milliseconds)
+    while(millis() - startTime < runDuration)
+    {
+    chassis_forward();
+    }
+
+    while((svl1==LOW) || (svr1 == LOW)){
+      chassis_forward()
+      svr1 = digitalRead(sr1);
+      svl1 = digitalRead(sl1);
+    }
+
+    ml->run(RELEASE);
+    mr->run(RELEASE);
+
+  }
+
+  else  // this code is just to catch any logical errors come up
+  {
+    ml -> run(RELEASE);
+    mr -> run(RELEASE);
+    while(true)
+    {}
+  }
+    
 }
 */
 
 
-/*void object_detection(){
+/*bool object_detection(){
   sensorValue = digitalRead(pe_sensor_pin);
   if (sensorValue == HIGH)
   {
     Serial.println("nothing"); //need to add 
+    return true;
   }
   if (sensorValue == LOW)
   {
     Serial.println("detected");
+    return false;
   }
   delay(50);
 }
@@ -296,11 +435,11 @@ if (svr == HIGH && svm == LOW && svl == LOW)
 
 
 // 
-  if (svr1 == HIGH or svl1 == HIGH ){
+  if ((svr1 == HIGH) || (svl1 == HIGH) ){
 
     if (arrayofPaths[current_Path][Turning_counter] == 1){
       if (current_Path == 0 && Turning_counter == 0 ){
-        delay(300);
+        delay(300); // we heuristically found that this works for it to turn and end up alligned nicely on the line at the end of the left turn
       }
       chassis_turn_left90();
       Turning_counter+=1;
@@ -323,10 +462,10 @@ if (svr == HIGH && svm == LOW && svl == LOW)
       current_Path+=1; //to go to the next path route
       Turning_counter=0;
     }
-    //picking up stationary object of known placement
+    //picking up stationary object of known placement    \\ for this picking up of known placement , we know they are both on a junction so if it detects junction -detects object - picks it up- and then reverses a bit so its able to detect the junction again and do the path stuff [simple :)]
     else if (arrayofPaths[current_Path][Turning_counter] == 5){}
 
-    //picking up object with unkown placement
+    //picking up object with unkown placement       // how would this work logically as there is no junction before hand to detect to do work cos by then it would have bumped into the object so :/ what to do about this :/
     else if (arrayofPaths[current_Path][Turning_counter] == 6)
     */
 
@@ -343,9 +482,9 @@ if (svr == HIGH && svm == LOW && svl == LOW)
       Turning_counter+=1;
     }
 
-    else{
-      //mr->setSpeed(0); // Sets inner wheel to a lower speed
-      //ml->setSpeed(0); // Sets outer wheel to a greater speed
+    else{// this code is just to catch any logical errors come up
+      //mr->setSpeed(0); 
+      //ml->setSpeed(0);
       ml -> run(RELEASE);
       mr -> run(RELEASE);
       while(true){  
