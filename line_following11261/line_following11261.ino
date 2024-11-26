@@ -18,8 +18,8 @@ int svl1 = 0;
 int svm = 0;
 int pe_sensor_value = 0;
 
-int forward_speedL = 200;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
-int forward_speedR = 205;
+int forward_speedL = 215;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
+int forward_speedR = 210;
 int backward_speed = 150;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();     // Setting up MotorShield
@@ -98,7 +98,7 @@ void chassis_turn_left ()     // Function to make it turn left slightly
   ml->setSpeed(forward_speed-25);
   */
 
-  ml ->setSpeed(forward_speedL - 26);
+  ml ->setSpeed(forward_speedL - 20);
   mr ->setSpeed(forward_speedR);  
   
   ml->run(FORWARD);
@@ -139,7 +139,7 @@ void chassis_turn_left ()     // Function to make it turn left slightly
     
 void chassis_turn_super_left()      // Function to turn strongly to the left, if its off the line by a lot
 {  
-  ml->setSpeed(forward_speedL -90);
+  ml->setSpeed(forward_speedL -50);
   mr->setSpeed(forward_speedR);
 
   ml->run(FORWARD);
@@ -181,7 +181,7 @@ void chassis_turn_super_left()      // Function to turn strongly to the left, if
 void chassis_turn_right ()    // Slight right readjustment to the right
 { 
   ml->setSpeed(forward_speedL);
-  mr->setSpeed(forward_speedR - 26);
+  mr->setSpeed(forward_speedR - 20);
 
   ml->run(FORWARD);
   mr->run(FORWARD);
@@ -229,7 +229,7 @@ void chassis_turn_right ()    // Slight right readjustment to the right
 void chassis_turn_super_right()     // Function to read just the robot by a large amount to get back onto the line
 {
   ml->setSpeed(forward_speedL);
-  mr->setSpeed(forward_speedR - 70);
+  mr->setSpeed(forward_speedR - 50);
 
   ml->run(FORWARD);
   mr->run(FORWARD);
@@ -296,7 +296,7 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 void chassis_turn_right90()     // Turns the robot 90 degress to the right
 {
   delay(35);      // We found that this small delay helps the turn be a large enough of a turning circle to line up onto the line after the turn has completed
-  mr->setSpeed(30);     // Sets inner wheel to a lower speed
+  mr->setSpeed(20);     // Sets inner wheel to a lower speed
   ml->setSpeed(235);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
