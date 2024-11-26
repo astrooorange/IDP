@@ -48,7 +48,7 @@ void setup()
   pinMode(sl1,INPUT);
   pinMode(sr1,INPUT);
   pinMode(pe_sensor_pin,INPUT);      //Setting up PhotoElectric Sensor
-  pinMode(magneticOutput,INPUT)        //Setting up Magnetic Sensor
+  pinMode(magneticSensor,INPUT);        //Setting up Magnetic Sensor
   pinMode(button_pin, INPUT);      //Setting up Button
 
 
@@ -167,6 +167,8 @@ void chassis_turn_right ()    // Slight right readjustment to the right
       break;
     }
 
+  }
+
   
   while(svr == HIGH && svm == HIGH && svl == LOW)     // To hold the motor at the lowest speed until the parameters change (because if it leaves the chassis turn function when the loop ends itll just recall this function changing the speed back to forward_speed and do the loop again, basically if this wasnt here it would continues do the loop over and over which is not good [ it might be good yk])
   {
@@ -177,7 +179,7 @@ void chassis_turn_right ()    // Slight right readjustment to the right
 
 }
 
-void chassis_turn_super_right()     // Function to readjust the robot by a large amount to get back onto the line
+void chassis_turn_super_right()     // Function to read just the robot by a large amount to get back onto the line
 {
   ml->setSpeed(forward_speed);
   mr->setSpeed(forward_speed-70);
@@ -581,17 +583,34 @@ void loop()
     }
     
     else if (array_of_paths[current_path][turning_counter] == 5)      // Picking up stationary object of known placement    \\ for this picking up of known placement , we know they are both on a junction so if it detects junction -detects object - picks it up- and then reverses a bit so its able to detect the junction again and do the path stuff [simple :)]
-    {
-      if (object_detection() == true)      // Just to check that the object is there (there is no point of having an if statement tbh - but i think this needs to be changed as this is most likely to not work from what is expected to what happens in reality ygm)
-        {
-        grab_object();
-        }
+    { 
+      while(object_detection() == false)
+      {
+        chassis_backward();
+      }
+
+      ml -> run(RELEASE);
+      mr -> run(RELEASE);
+
+      grab_object();
+
+      delay(15);
+
+      while((svl1==LOW) || (svr1 == LOW))
+      {
+        chassis_forward();
+        svr1 = digitalRead(sr1);
+        svl1 = digitalRead(sl1);
+      }
+
+     // Just to check that the object is there (there is no point of having an if statement tbh - but i think this needs to be changed as this is most likely to not work from what is expected to what happens in reality ygm)
+        
       turning_counter+=1;
     }
     
-
+  */
   }
-
+  /*
   // maybe this is code would be used too much so if the code slows down then :/   - Also if the robot is moving slow its probably becuase there is soo much code it has to go through before it loops
   // I  think this can work   [!!!!]// This is outside - if the front line sensors are detected - as this is to take place between the junctions
   if (array_of_paths[current_path][turning_counter] == 6)      // Picking up object with unknown placement        ITll work, i think->// how would this work logically as there is no junction before hand to detect to do work cos by then it would have bumped into the object so :/ what to do about this :/
