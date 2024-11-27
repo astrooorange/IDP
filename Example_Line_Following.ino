@@ -169,22 +169,44 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 
 void chassis_turn_right90()     // Turns the robot 90 degress to the right
 {
+//backward
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {
     chassis_backward();
-  }
-  
- // delay(70);      // We found that this small delay helps the turn be a large enough of a turning circle to line up onto the line after the turn has completed
-  mr->setSpeed(20);     // Sets inner wheel to a lower speed
+  }  
+//first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
+  mr->setSpeed(100);     // Sets inner wheel to a lower speed
   ml->setSpeed(250);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
 
   startTime=millis();     // Variable to store the start time
-  runDuration = 2600 ;      // Time we want the program to run for (in milliseconds)
+  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {}
+
+//forward
+  startTime=millis();     // Variable to store the start time
+  runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {
+    chassis_forward();
+  }
+//second turning
+  mr->setSpeed(0);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
+
+
 
   while(millis() - startTime < runDuration)
   {}
@@ -231,12 +253,12 @@ void loop() {
   {
     chassis_turn_super_right();
   }
-
+/*
   if (svl1 == HIGH && svr1 == LOW){
     chassis_turn_left90();
-  }
+  }*/
 
-  if (svl1 == LOW && svr1 == HIGH){
+ if (svl1 == LOW && svr1 == HIGH){
     chassis_turn_right90();
   }
 
