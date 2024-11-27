@@ -18,7 +18,7 @@ int svl1 = 0;
 int svm = 0;
 int pe_sensor_value = 0;
 
-int forward_speedL = 215;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
+int forward_speedL = 220;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
 int forward_speedR = 210;
 int backward_speed = 150;
 
@@ -81,12 +81,15 @@ void chassis_forward ()     // Move forward in a straight line
 
   mr->run(FORWARD);     // Starts the wheels to spin
   ml->run(FORWARD);
+
+  delay(5);
 }
 
 void chassis_backward ()      // Function to move backwards in a straight line
 { 
-  ml->setSpeed(backward_speed-5);
-  mr->setSpeed(backward_speed);
+  ml->setSpeed(backward_speed);
+  mr->setSpeed(backward_speed-7);
+
   ml->run(BACKWARD);      //  The wheels start to spin
   mr->run(BACKWARD);
 }
@@ -98,11 +101,14 @@ void chassis_turn_left ()     // Function to make it turn left slightly
   ml->setSpeed(forward_speed-25);
   */
 
-  ml ->setSpeed(forward_speedL - 20);
+  ml ->setSpeed(forward_speedL - 26);
   mr ->setSpeed(forward_speedR);  
   
   ml->run(FORWARD);
   mr->run(FORWARD);
+  
+  delay(5);
+
   // for (int i=forward_speed; i>forward_speed-26; i-=2)     // Slowly decreases speed down so its smoother (if it works)
   // {
   //   // if (svl == LOW && svm == HIGH && svr == HIGH)  // So the for loop breaks if its realligned itself/ gone far off the line intead of continuing the loop even though this piece of code is no longer relevant
@@ -145,6 +151,8 @@ void chassis_turn_super_left()      // Function to turn strongly to the left, if
   ml->run(FORWARD);
   mr->run(FORWARD);
 
+  delay(5);
+
   // for (int i=forward_speed; i>forward_speed-70; i-=10)     // Slowly decreases speed down so its smoother (if it works)
   // {
   //   // if (svl == LOW && svm == LOW && svr == HIGH)          // So the for loop breaks if its realligned itself/ gone far off the line intead of continuing the loop even though this piece of code is no longer relevant
@@ -181,10 +189,12 @@ void chassis_turn_super_left()      // Function to turn strongly to the left, if
 void chassis_turn_right ()    // Slight right readjustment to the right
 { 
   ml->setSpeed(forward_speedL);
-  mr->setSpeed(forward_speedR - 20);
+  mr->setSpeed(forward_speedR - 32);
 
   ml->run(FORWARD);
   mr->run(FORWARD);
+
+  delay(5);
   // for (int i=forward_speed; i>forward_speed-26; i-=2)
   // {
   //   // if (svl == HIGH && svm == HIGH && svr == LOW)    // So the for loop breaks if its realligned itself/ gone far off the line intead of continuing the loop even though this piece of code is no longer relevant
@@ -229,11 +239,12 @@ void chassis_turn_right ()    // Slight right readjustment to the right
 void chassis_turn_super_right()     // Function to read just the robot by a large amount to get back onto the line
 {
   ml->setSpeed(forward_speedL);
-  mr->setSpeed(forward_speedR - 50);
+  mr->setSpeed(forward_speedR - 60);
 
   ml->run(FORWARD);
   mr->run(FORWARD);
-
+  
+  delay(5);
 
   // for (int i=forward_speed; i>forward_speed-70; i-=10)
   // {
@@ -275,40 +286,103 @@ void chassis_turn_super_right()     // Function to read just the robot by a larg
 
 
 void chassis_turn_left90()      // Rotates the robot 90 degress to the left
-{    
-  mr->setSpeed(235);      // Sets inner wheel to a lower speed
-  ml->setSpeed(20);     // Sets outer wheel to a greater speed
-  mr->run(FORWARD);     // The wheels start to spin
-  ml->run(FORWARD);
-  //delay(120);
+{  
+  //backward
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 2000 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {
+    chassis_backward();
+  }  
+  //first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
+  ml->setSpeed(100);     // Sets inner wheel to a lower speed
+  mr->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {}
 
-  ml->run(RELEASE);     // Turns of the motors to prevent any over shoot and to start from a baseline amount for the next piece of code the robot runs.
-  mr->run(RELEASE);
-  
+  //forward
+  startTime=millis();     // Variable to store the start time
+  runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
 
+  while(millis() - startTime < runDuration)
+  {
+    chassis_forward();
+  }
+
+  //second turning
+  // So it continues to turn until it lines up (hopefully works :)  )
+  while(digitalRead(sr) == LOW){
+    ml->setSpeed(0); 
+  }
+
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+
+  delay(5);
 }
 
 void chassis_turn_right90()     // Turns the robot 90 degress to the right
 {
-  delay(35);      // We found that this small delay helps the turn be a large enough of a turning circle to line up onto the line after the turn has completed
-  mr->setSpeed(20);     // Sets inner wheel to a lower speed
-  ml->setSpeed(235);      // Sets outer wheel to a greater speed
+//backward
+  unsigned long startTime=millis();     // Variable to store the start time
+  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {
+    chassis_backward();
+  }  
+//first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
+  mr->setSpeed(100);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
 
-  unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 2200 ;      // Time we want the program to run for (in milliseconds)
+  startTime=millis();     // Variable to store the start time
+  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {}
 
+//forward
+  startTime=millis();     // Variable to store the start time
+  runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {
+    chassis_forward();
+  }
+//second turning
+  // So it continues to turn until it lines up (hopefully works :)  )
+  while(digitalRead(sl) == LOW){
+    mr->setSpeed(0); 
+  }
+
+
+
+  /*mr->setSpeed(0);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
+
+
+
+  while(millis() - startTime < runDuration)
+  {}*/
+
   ml->run(RELEASE);
   mr->run(RELEASE);
+
+  delay(5);
 }
 
 /*      
