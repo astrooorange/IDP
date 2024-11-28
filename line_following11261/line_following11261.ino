@@ -1,4 +1,7 @@
 #include <Adafruit_MotorShield.h>
+#include <Servo.h>
+
+Servo myservo;  // Create servo object to control a servo
 
 int magneticSensor = 2;     // Pin for Magnetic sensor
 int button_pin = 3; // Pin for Button 
@@ -30,7 +33,7 @@ Adafruit_DCMotor *ml = AFMS.getMotor(4);
 int current_path = 0;
 int turning_counter = 0;
 
-int path0[] = {1,2,0,2,99,3};     // Once we finish the picking up object code the path should be {5,1,2,0,2,3} // this new line works fine if 5 (picking up the box) doesnt move the robot :)
+int path0[] = {5,1,2,0,2,3};     // Once we finish the picking up object code the path should be {1,2,0,2,99,3} // this new line works fine if 5 (picking up the box) doesnt move the robot :)
 int path1[] = {5,2,2,2,3};
 int path2[] = {1,6,1,1,4};
 int path3[] = {1,2,2,6,0,2,0,2,3};
@@ -42,7 +45,8 @@ int* array_of_paths[] = {path0,path1,path2,path3,path4};
 
 
 void setup()
-{
+{ 
+  myservo.attach(10);         // Setting up Pin for the Servo
   pinMode(sr,INPUT);         // Setting up each line sensor
   pinMode(sl,INPUT);
   pinMode(sm,INPUT);
@@ -69,6 +73,8 @@ void setup()
 
   while (digitalRead(button_pin) == LOW) // Code only starts once the button is pressed
   {}
+
+  myservo.write(80);      // Adjust the intial position of the Servo to be at this amount
 
 }
 
@@ -289,24 +295,24 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 {  
   //backward
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 350 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {
     chassis_backward();
   }  
   //first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
-  ml->setSpeed(100);     // Sets inner wheel to a lower speed
+  ml->setSpeed(80);     // Sets inner wheel to a lower speed
   mr->setSpeed(250);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
 
   startTime=millis();     // Variable to store the start time
-  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
+  runDuration = 2400 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {}
-
+  /*
   //forward
   startTime=millis();     // Variable to store the start time
   runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
@@ -314,12 +320,12 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
   while(millis() - startTime < runDuration)
   {
     chassis_forward();
-  }
+  }*/
 
   //second turning
   // So it continues to turn until it lines up (hopefully works :)  )
   while(digitalRead(sr) == LOW){
-    ml->setSpeed(0); 
+     
   }
 
   ml->run(RELEASE);
@@ -332,37 +338,66 @@ void chassis_turn_right90()     // Turns the robot 90 degress to the right
 {
 //backward
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 650 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {
     chassis_backward();
   }  
 //first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
-  mr->setSpeed(100);     // Sets inner wheel to a lower speed
+  mr->setSpeed(250);     // Sets inner wheel to a lower speed
   ml->setSpeed(250);      // Sets outer wheel to a greater speed
-  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  mr->run(BACKWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
 
   startTime=millis();     // Variable to store the start time
-  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
+  runDuration = 450 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {}
 
 //forward
   startTime=millis();     // Variable to store the start time
-  runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+  runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {
     chassis_forward();
   }
-//second turning
+  //second turning
   // So it continues to turn until it lines up (hopefully works :)  )
-  while(digitalRead(sl) == LOW){
-    mr->setSpeed(0); 
+
+  mr->setSpeed(250);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(BACKWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 350 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {}
+
+//forward
+  startTime=millis();     // Variable to store the start time
+  runDuration = 700 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {
+    chassis_forward();
   }
+
+
+  mr->setSpeed(70);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 350 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {}
 
 
 
@@ -385,7 +420,7 @@ void chassis_turn_right90()     // Turns the robot 90 degress to the right
   delay(5);
 }
 
-/*      
+     
 // NEED TO FINISH THIS FUNCTION OFF + CHANGE THE TIMING SO IT WORKS PROPERLLY
 void drop_off() // Function to drop the object whenever the robot is at the junction facing towards the drop off point
 {
@@ -399,10 +434,15 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
   }
 
   // ADD CODE TO SPIN SERVOS
+    myservo.write(-20); // pushout
+    myservo.write(80);  // back to initial
+
+    delay(15);
+
   // then it should just spin the servos to push the box off the catchment
 
-  unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
+  startTime=millis();     // Variable to store the start time
+  runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
   while(millis() - startTime < runDuration);
   {
     chassis_backward();
@@ -412,8 +452,15 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
 void grab_object()
 {
   // the code here is literally only: spin the servo so that it pushes the object into the basket. Thats it :)
-
+  for(int i;i<3;i++)      // Tries 3 times to sweep in so the object certainly is in
+  {
+  myservo.write(80);      // Attempts to sweep in the object
+  delay(15);         
+  myservo.write(20);
+  delay(15);
+  }
 }
+/*
 
 void chassis_path_from7()      // Function to drop off the waste at the respective drop off point given that the robot is at junction number 7 (all junctions were numbered and that photo can be seen on the word document we shared) (the robot is assumed ot be facing to the left) (chassis_dropoff_fromL) 
 {     
@@ -603,10 +650,10 @@ void chassis_path_from8()      // Function to drop off waste in correct position
 }
 
 
-
+*/
 bool object_detection()     // Function that detects if the object is in front of the robot using the photoelectric sensor, and returns a boolean value
 {
-  sensor_value = digitalRead(pe_sensor_pin);
+  int sensor_value = digitalRead(pe_sensor_pin);
 
   if (sensor_value == HIGH)
   {
@@ -618,9 +665,9 @@ bool object_detection()     // Function that detects if the object is in front o
     return false;
   }
 
-  delay(50);
+  delay(10);
 }
-*/
+
 
 
 int first_step = 0;     // Variable to help the robot see if its inside the starting box or not
@@ -741,7 +788,7 @@ void loop()
       current_path+=1;      // To go to the next path route
       turning_counter=0;      // So it starts at the first instruction on the new path route
     }
-    
+    */
     else if (array_of_paths[current_path][turning_counter] == 5)      // Picking up stationary object of known placement    \\ for this picking up of known placement , we know they are both on a junction so if it detects junction -detects object - picks it up- and then reverses a bit so its able to detect the junction again and do the path stuff [simple :)]
     { 
       while(object_detection() == false)
@@ -768,7 +815,7 @@ void loop()
       turning_counter+=1;
     }
     
-  */
+  
   }
   /*
   // maybe this is code would be used too much so if the code slows down then :/   - Also if the robot is moving slow its probably becuase there is soo much code it has to go through before it loops

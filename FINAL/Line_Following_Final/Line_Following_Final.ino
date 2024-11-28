@@ -1,13 +1,13 @@
 #include <Adafruit_MotorShield.h>
 
-int magneticSensor = 2;     // Pin for Magnetic sensor
+
 int button_pin = 3; // Pin for Button 
 int sr = 4;  // Pin for right sensor  (of the three in a row)
 int sl = 5;    // Pin for left sensor  (of the three in a row)
 int sm = 6;   // Pin for middle sensor  (of the three)
 int sr1 = 7 ; // Pin for  top right sensor
 int sl1 = 8;  // Pin for  top left sensor
-int pe_sensor_pin = 9; // Pin for Photoelectric sensor
+
 
 
 
@@ -16,7 +16,7 @@ int svr1 = 0;
 int svl = 0;
 int svl1 = 0;
 int svm = 0;
-int pe_sensor_value = 0;
+
 
 int forward_speedL = 220;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
 int forward_speedR = 210;
@@ -26,19 +26,6 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();     // Setting up MotorShiel
 Adafruit_DCMotor *mr = AFMS.getMotor(3);      // Setting up motors M3, M4
 Adafruit_DCMotor *ml = AFMS.getMotor(4);
 
-// All below is just pathing stuff, creating an array of list of all the commands it should do
-int current_path = 0;
-int turning_counter = 0;
-
-int path0[] = {1,2,0,2,99,3};     // Once we finish the picking up object code the path should be {5,1,2,0,2,3} // this new line works fine if 5 (picking up the box) doesnt move the robot :)
-int path1[] = {5,2,2,2,3};
-int path2[] = {1,6,1,1,4};
-int path3[] = {1,2,2,6,0,2,0,2,3};
-int path4[] = {2,1,1,2};      // This just code returning the AGV back to the start box // we need to add some extra code to make it go into that final finish box maybe something like we did at the start to get it back in the boxxx
-
-int* array_of_paths[] = {path0,path1,path2,path3,path4};
-
-//so you want it to go on array_of_paths[current_path][turning_counter]
 
 
 void setup()
@@ -48,8 +35,6 @@ void setup()
   pinMode(sm,INPUT);
   pinMode(sl1,INPUT);
   pinMode(sr1,INPUT);
-  pinMode(pe_sensor_pin,INPUT);      //Setting up PhotoElectric Sensor
-  pinMode(magneticSensor,INPUT);        //Setting up Magnetic Sensor
   pinMode(button_pin, INPUT);      //Setting up Button
 
 
@@ -147,22 +132,114 @@ void chassis_turn_super_right()     // Function to read just the robot by a larg
 
 void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 { 
-  delay(50);   
-  mr->setSpeed(240);      // Sets inner wheel to a lower speed
-  ml->setSpeed(20);     // Sets outer wheel to a greater speed
-  mr->run(FORWARD);     // The wheels start to spin
-  ml->run(FORWARD);
-  //delay(120);
+  // Single Turn
+
+  /*
+  while(digitalRead(sm)== HIGH)     // To allign the robot to be ontop of the junction
+  {
+    chassis_forward()
+  }
+
+  chassis_backward()      // So that the back sensors are on top of the line
+  chassis_backward()
+  chassis_backward()
+  chassis_backward()
+  chassis_backward()
+
+  ml->setSpeed(250);
+  mr->setSpeed(250);
+
+  ml->run(BACKWARD);
+  mr->run(FORWARD);
+
+  // This is so it starts to turn just in case there is like a '+' junction so it gets past the line infront of itand then starts doing the time measuring for the correct turning amount
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 2270 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 600 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
+  {}  
+
+  // time taken for the top left sensor to hit then find the time taken for it to turn between each top sensor.
+
+  while(digitalRead(sr1) == LOW)
+  {
+    if (digitalRead(sl1) == HIGH)
+    {
+      unsigned long just_before_line_time = millis();
+    }
+  }
+  unsigned long just_after_line_time = millis();
+
+  ml->run(FORWARD);
+  mr->run(BACKWARD);
+
+  while(millis() - just_after_line_time < (just_after_line_time - just_before_line_time)/2)
   {}
 
-  ml->run(RELEASE);     // Turns of the motors to prevent any over shoot and to start from a baseline amount for the next piece of code the robot runs.
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+  */
+
+  // Double Turn
+
+  /*
+  ml->setSpeed(250);
+  mr->setSpeed(250);
+
+  ml->run(BACKWARD);
+  mr->run(FORWARD);
+
+  unsigned long startTime=millis();     // Variable to store the start time
+  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+
+  while(millis() - startTime < runDuration)
+  {}  
+
+  int prior_state = digitalRead(sl);
+
+  // This loop moves the chassis_forward until the back left sensor goes from low to high (which means its onto the next line)
+  while(true)
+  {
+    chassis_forward();
+
+    int current_state = digitalRead(sl);
+
+    if (prior_state == LOW && current_state == HIGH)
+      {
+        break;
+      }
+
+    prior_state = current_state;
+
+    delay(5);
+  }
+
+  // This is the second turn and it should turn itself off after its detected the next line
+
+  mr->run(FORWARD);     // To start the second turn
+  ml->run(BACKWARD);
+
+  while(digitalRead(sr1) == LOW)      // To measure the time it takes for the two top sensors to touch/pass over the line
+  {
+    if (digitalRead(sl1) == HIGH)
+    {
+      unsigned long just_before_line_time = millis();
+    }
+  }
+  unsigned long just_after_line_time = millis();
+
+  ml->run(FORWARD);
+  mr->run(BACKWARD);
+
+  // Telling it to reverse and line up back onto the line
+  while(millis() - just_after_line_time < (just_after_line_time - just_before_line_time)/2)
+  {}
+
+  ml->run(RELEASE);
   mr->run(RELEASE);
 
-  delay(5);
+
+  delay(5);*/
   
 
 }
@@ -218,7 +295,7 @@ void chassis_turn_right90()     // Turns the robot 90 degress to the right
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+ 
   svr = digitalRead(sr);      // Reading all the sensors
   svl = digitalRead(sl);
   svm = digitalRead(sm);
@@ -253,16 +330,16 @@ void loop() {
   {
     chassis_turn_super_right();
   }
-/*
+
   if (svl1 == HIGH && svr1 == LOW){
     chassis_turn_left90();
-  }*/
+  }
 
- if (svl1 == LOW && svr1 == HIGH){
+  if (svl1 == LOW && svr1 == HIGH){
     chassis_turn_right90();
   }
 
-
+  // Debugging
   Serial.print("L:");
   Serial.print(digitalRead(sl));
   Serial.print("    M:");
