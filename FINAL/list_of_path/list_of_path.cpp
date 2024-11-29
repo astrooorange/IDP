@@ -9,13 +9,11 @@ void execute_list(int list)
   int counter = 0;
   int listSize = sizeof(list);
 
-  while (counter < listSize)
-  { 
+  while (((svl1 == HIGH) || (svr1 == HIGH)) && counter <= listSize){
 
     if (list[counter] == 0) 
     { 
       chassis_forward();
-      delay(500);
     } 
     
     else if (list[counter] == 1) 
@@ -46,8 +44,18 @@ void execute_list(int list)
     else if (list[counter] == 7) 
     {
       chassis_stop();
+
+    else if (list[counter] == 8) 
+    {
+      int magneticOutput = digitalRead(magneticPin);
+      
+      if (magneticOutput = HIGH){
+      execute_list(node7_magnetic) ;
+      else{
+      execute_list(node7_nonmagnetic);
     }
-    counter += 1;
+      counter += 1;
+  }
   }
 }
 
