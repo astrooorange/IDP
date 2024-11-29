@@ -71,19 +71,27 @@ void chassis_turn_super_right()     // Function to read just the robot by a larg
 
 void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 { 
+
+  ml->setSpeed(62);     // Sets inner wheel to a lower speed
+  mr->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+  delay(2250);
+
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+
+  delay(5);
+  
+/*
   // Single Turn
-
-  /*
-  while(digitalRead(sm)== HIGH)     // To allign the robot to be ontop of the junction
-  {
-    chassis_forward()
-  }
-
-  chassis_backward()      // So that the back sensors are on top of the line
-  chassis_backward()
-  chassis_backward()
-  chassis_backward()
-  chassis_backward()
+  
+  
+       // To allign the robot to be ontop of the junction
+  
+  chassis_forward();
+  delay(1000);
+  
 
   ml->setSpeed(250);
   mr->setSpeed(250);
@@ -93,18 +101,19 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 
   // This is so it starts to turn just in case there is like a '+' junction so it gets past the line infront of itand then starts doing the time measuring for the correct turning amount
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 600 ;      // Time we want the program to run for (in milliseconds)
+  unsigned long runDuration = 700 ;      // Time we want the program to run for (in milliseconds)
 
   while(millis() - startTime < runDuration)
   {}  
 
   // time taken for the top left sensor to hit then find the time taken for it to turn between each top sensor.
+  unsigned long just_before_line_time = 0;
 
   while(digitalRead(sr1) == LOW)
   {
     if (digitalRead(sl1) == HIGH)
     {
-      unsigned long just_before_line_time = millis();
+      just_before_line_time = millis();
     }
   }
   unsigned long just_after_line_time = millis();
@@ -116,8 +125,8 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
   {}
 
   ml->run(RELEASE);
-  mr->run(RELEASE);
-  */
+  mr->run(RELEASE);*/
+  
 
   // Double Turn
 
@@ -185,47 +194,26 @@ void chassis_turn_left90()      // Rotates the robot 90 degress to the left
 
 void chassis_turn_right90()     // Turns the robot 90 degress to the right
 {
-//backward
-  unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
+  /*chassis_forward();
+  delay(800);
+  ml->setSpeed(250);     // Sets inner wheel to a lower speed
+  mr->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(BACKWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+  delay(1000);
 
-  while(millis() - startTime < runDuration)
-  {
-    chassis_backward();
-  }  
-//first turning : total time for turning = 2600 to make the chassis horizontal, given its speed (0,250)
-  mr->setSpeed(100);     // Sets inner wheel to a lower speed
+
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+
+  delay(5);
+  chassis_forward();
+  delay(700); */
+  mr->setSpeed(50);     // Sets inner wheel to a lower speed
   ml->setSpeed(250);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
-
-  startTime=millis();     // Variable to store the start time
-  runDuration = 2800 ;      // Time we want the program to run for (in milliseconds)
-
-  while(millis() - startTime < runDuration)
-  {}
-
-//forward
-  startTime=millis();     // Variable to store the start time
-  runDuration = 800 ;      // Time we want the program to run for (in milliseconds)
-
-  while(millis() - startTime < runDuration)
-  {
-    chassis_forward();
-  }
-//second turning
-  mr->setSpeed(0);     // Sets inner wheel to a lower speed
-  ml->setSpeed(250);      // Sets outer wheel to a greater speed
-  mr->run(FORWARD);     // Starts the wheels to spinnnnn
-  ml->run(FORWARD);
-
-  startTime=millis();     // Variable to store the start time
-  runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
-
-
-
-  while(millis() - startTime < runDuration)
-  {}
+  delay(2200);
 
   ml->run(RELEASE);
   mr->run(RELEASE);

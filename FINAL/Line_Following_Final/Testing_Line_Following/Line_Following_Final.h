@@ -8,6 +8,9 @@
 extern int forward_speedL;
 extern int forward_speedR;
 extern int backward_speed;
+extern int sm;
+extern int sr1;
+extern int sl1;
 
 // Declare motors
 extern Adafruit_DCMotor* ml;

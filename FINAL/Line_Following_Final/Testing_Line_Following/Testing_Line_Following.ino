@@ -3,13 +3,13 @@
 
 #include "Line_Following_Final.h"
 
-int button_pin = 3; // Pin for Button 
+int button_pin = 10; // Pin for Button 
 
-int sr = 4;  // Pin for right sensor  (of the three in a row)
-int sl = 5;    // Pin for left sensor  (of the three in a row)
-int sm = 6;   // Pin for middle sensor  (of the three)
-int sr1 = 7 ; // Pin for  top right sensor
-int sl1 = 8;  // Pin for  top left sensor
+int sr = 8;  // Pin for right sensor  (of the three in a row)
+int sl = 6;    // Pin for left sensor  (of the three in a row)
+int sm = 7;   // Pin for middle sensor  (of the three)
+int sr1 = 9 ; // Pin for  top right sensor
+int sl1 = 5;  // Pin for  top left sensor
 
 
 
@@ -92,14 +92,14 @@ void loop() {
   {
     chassis_turn_super_right();
   }
-
+  
   if (svl1 == HIGH && svr1 == LOW){
     chassis_turn_left90();
   }
-
+  /*
   if (svl1 == LOW && svr1 == HIGH){
     chassis_turn_right90();
-  }
+  }*/
 
   // Debugging
   Serial.print("L:");
