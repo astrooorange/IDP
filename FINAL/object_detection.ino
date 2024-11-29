@@ -5,7 +5,7 @@ void setup(){
 }
 
 //function of object detection: when it reaches the line where the object lies on, object_detection is triggered. 
-object_detection();
+void object_detection()
 {
   //while the chassis is on the line
   while((svl1==LOW) || (svr1 == LOW))
