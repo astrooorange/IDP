@@ -43,10 +43,6 @@ void setup()
 
   Serial.begin(9600);           // Set up Serial library at 9600 bps
 
-  // 0, 1（左）, 2（右） 转向
-  // 碰到junction就判断是否要转向
-  //转到左边的垃圾场
-
   if (!AFMS.begin()) // Setting up Motor Shield
   {         
     Serial.println("Could not find Motor Shield. Check wiring.");
@@ -77,12 +73,10 @@ void loop() {
     chassis_forward();
   }
 
-
   if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
   {
     chassis_turn_left();
   }
-
 
   if (svl == LOW && svm == HIGH && svr == HIGH)     // Turn faintly right
   {
