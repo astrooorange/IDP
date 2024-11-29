@@ -1,22 +1,11 @@
-#include <Servo.h>
-
-Servo myservo;  // create servo object to control a servo
-int pe_sensor_pin = 9; // Pin for Photoelectric sensor
-
-int pe_sensor_value = 0;
-
-
-void setup() {
-  myservo.attach(10);
-  pinMode(pe_sensor_pin,INPUT);
-  Serial.begin(9600); 
-  myservo.write(80);
-}
+#include <Arduino.h>
+#include "Servo_Final.h"
+#include "Line_Following_Final.h"
 
 void grab_object()
 {
   
-  for(int i = 0 ;i <6 ;i++)      // Tries 5 times to sweep in so the object certainly is in
+  for(int i = 0 ;i <6 ;i++)      // Tries 5 times to sweep in, so the object IS in
   {
   myservo.write(80);      // Attempts to sweep in the object
   delay(800);         
@@ -38,13 +27,11 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
     chassis_forward();
   }
 
-  // ADD CODE TO SPIN SERVOS
-    myservo.write(-20); // pushout
-    myservo.write(80);  // back to initial
+    myservo.write(-20);     // Spinning the Servos to push the waste out of the catchment     
+    myservo.write(80);      // Back to initial
 
     delay(15);
 
-  // then it should just spin the servos to push the box off the catchment
 
   startTime=millis();     // Variable to store the start time
   runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
@@ -52,30 +39,4 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
   {
     chassis_backward();
   }
-}
-
-
-void loop() {
-  int i = 0;
-  phv = digitalRead(phs);
-  if (phv == LOW){
-  Serial.println("pick up");
-  while (i<6) // repeat collection for 5 times
-  {
-  myservo.write(80);
-  delay(800);         // the angles are not corrrect
-  myservo.write(20);
-  delay(800);
-  Serial.println(i);
-  i += 1;
-  }
-  delay(1000);  //pick up for 1s
-  myservo.write(-20); // pushout
-  myservo.write(80);  // back to initial
-  }
-  else
-  {
-    Serial.println("nothing");
-  }
-  delay(15);   // waits for the servo to get there
 }
