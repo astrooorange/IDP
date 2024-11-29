@@ -99,5 +99,24 @@ void get_me_out_of_the_starting_box()
     }
 }
 
+void get_me_into_the_starting_box()
+{
+  //enters the box
+  chassis_forward();
+
+  //move for 1s
+  unsigned long startTime=millis();     // Variable to store the start time
+  unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - startTime < runDuration);
+  {
+    chassis_forward();
+  }
+
+  //stop moving
+  ml->run(RELEASE);
+  mr->run(RELEASE);     // Starts the wheels to spinnnnn
+  
+}
+
 
 
