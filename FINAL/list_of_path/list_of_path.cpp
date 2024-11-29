@@ -15,6 +15,7 @@ void execute_list(int list)
     if (list[counter] == 0) 
     { 
       chassis_forward();
+      delay(500);
     } 
     
     else if (list[counter] == 1) 
