@@ -22,5 +22,7 @@ void chassis_turn_super_left();
 void chassis_turn_super_right();
 void chassis_turn_left90();
 void chassis_turn_right90();
+void get_me_out_of_the_starting_box();
+void get_me_into_the_starting_box();
 
 #endif
