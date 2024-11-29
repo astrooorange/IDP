@@ -87,8 +87,17 @@ void chassis_turn_right90()
   delay(15);
 }
 
+void get_me_out_of_the_starting_box()
+{
+  chassis_forward();
 
-
+    while ((svm == LOW) || (svr == LOW) ||(svl==LOW))
+    {
+      svr=digitalRead(sr); 
+      svl=digitalRead(sl);
+      svm =digitalRead(sm);
+    }
+}
 
 
 
