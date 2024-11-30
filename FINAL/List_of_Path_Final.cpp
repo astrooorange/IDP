@@ -3,6 +3,7 @@
 #include "Line_Following_Final.h"  // For functions1; chassis_forward(),chassis_turn_left90(),chassis_turn_right90()
 #include "Servo_Final.h"           // For functions: pick_up(), drop_off()
 #include "Route_of_Chassis_Final.h"        // For the routes
+#include "Light_State_Final.h"        // For the chassis_currently_moving variable for the flashing lights
 
 //this is the function that intakes a list of path
 void execute_list(int list[]) 
@@ -103,6 +104,8 @@ void execute_list(int list[])
 
       else if (list[counter] == 10)     // Turn around 180 degreess (then reverse so its ontop of the junction)
       {
+        chassis_currently_moving = true;
+        
         ml->setSpeed(250);     // Sets inner wheel to a lower speed
         mr->setSpeed(250);      // Sets outer wheel to a greater speed
         mr->run(BACKWARD);     // Starts the wheels to spinnnnn
@@ -116,6 +119,8 @@ void execute_list(int list[])
 
         ml->run(RELEASE);
         mr->run(RELEASE);
+
+        chassis_currently_moving = false;
 
         delay(5);
 

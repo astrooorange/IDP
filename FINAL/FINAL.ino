@@ -2,8 +2,10 @@
 #include "Route_of_Chassis_Final.h"
 #include "Servo_Final.h"
 #include "List_of_Path_Final.h"
+#include "Light_State_Final.h"
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
+#include <TimerOne.h> 
 
 Servo myservo;  // Create servo object to control a servo
 
@@ -62,6 +64,10 @@ void setup()
   {}
 
   myservo.write(80);      // Adjust the intial position of the Servo to be at this amount
+
+  // Interrupts stuff for the flashing light
+  Timer1.initialize(500000); // Set timer to overflow every 0.5 seconds
+  Timer1.attachInterrupt(toggle_led);  // Attach the interrupt function to Timer1
 
 }
 

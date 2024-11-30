@@ -1,18 +1,34 @@
 #include <Arduino.h>
 #include "Servo_Final.h"
 #include "Line_Following_Final.h"
+#include "List_of_Path_Final.h"
 
-void grab_object()
+void pick_up()
 {
   
-  for(int i = 0 ;i <6 ;i++)      // Tries 5 times to sweep in, so the object IS in
-  {
-  myservo.write(80);      // Attempts to sweep in the object
-  delay(800);         
-  myservo.write(20);
-  delay(800);
+  int val = 0;     // Value for smooth turning
 
-  Serial.println(i);      // Debug
+  for (int i =0; i < 3;i++) // repeat collection for 3 times
+  {
+    while(val < 80)
+    {
+      val += 1;
+      myservo.write(val);
+      delay(30);
+      Serial.println(val);
+    }
+    delay(800);  
+
+    while (val > 65)
+    {
+      val -= 1;
+      myservo.write(val);
+      delay(30);
+      Serial.println(val);
+    }
+    
+    delay(800);
+    //Serial.println(i);
   }
 }
 
@@ -27,7 +43,9 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
     chassis_forward();
   }
 
-    myservo.write(-20);     // Spinning the Servos to push the waste out of the catchment     
+    
+    myservo.write(105);     // Spinning the Servos to push the waste out of the catchment 
+    delay(700);     // Pushout        
     myservo.write(80);      // Back to initial
 
     delay(15);
@@ -39,4 +57,28 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
   {
     chassis_backward();
   }
+}
+
+void object_detection()
+{
+  int svl1 = digitalRead(sl1);
+  int svr1 = digitalRead(sr1);
+
+  //while the chassis is on the line
+  
+  chassis_backward();
+  delay(2000);
+
+  while(digitalRead(pe_sensor_pin) == false)
+  {
+    chassis_forward();
+  }
+
+  delay(500);
+
+  ml -> run(RELEASE);
+  mr -> run(RELEASE);
+
+  delay(5);
+
 }

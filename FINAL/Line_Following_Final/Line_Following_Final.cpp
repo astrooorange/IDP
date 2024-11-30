@@ -69,29 +69,41 @@ void chassis_turn_super_right()     // Function to read just the robot by a larg
 
 }
 
-void chassis_turn_leftt90() 
+void chassis_turn_left90() 
 {  
-  ml->setSpeed(250);     // Sets inner wheel to a lower speed
+  ml->setSpeed(62);     // Sets inner wheel to a lower speed
   mr->setSpeed(250);      // Sets outer wheel to a greater speed
-  ml->run(BACKWARD);     // Starts the wheels to spinnnnn
-  mr->run(FORWARD);
-  delay(15);
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
+  ml->run(FORWARD);
+  delay(2250);
+
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+
+  delay(5);
 }
 
 void chassis_turn_right90() 
 {  
-  ml->setSpeed(250);     // Sets inner wheel to a lower speed
-  mr->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->setSpeed(50);     // Sets inner wheel to a lower speed
+  ml->setSpeed(250);      // Sets outer wheel to a greater speed
+  mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);
-  mr->run(BACKWARD);     // Starts the wheels to spinnnnn
-  delay(15);
+  delay(2200);
+
+  ml->run(RELEASE);
+  mr->run(RELEASE);
+
+  delay(5);
 }
 
 void get_me_out_of_the_starting_box()
 {
   chassis_forward();
-
-    while ((svm == LOW) || (svr == LOW) ||(svl==LOW))
+  int svr=digitalRead(sr); 
+  int svl=digitalRead(sl);
+  int svm =digitalRead(sm);
+    while ((svm == LOW) || ( svr == LOW) ||(svl==LOW))
     {
       svr=digitalRead(sr); 
       svl=digitalRead(sl);

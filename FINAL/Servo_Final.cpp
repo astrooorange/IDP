@@ -2,27 +2,42 @@
 #include "Servo_Final.h"
 #include "Line_Following_Final.h"
 #include "List_of_Path_Final.h"
+#include "Light_State_Final.h"
 
 void pick_up()
-{  
-  for(int i = 0 ;i <6 ;i++)      // Tries 5 times to sweep in, so the object IS in
-  {
-  myservo.write(80);      // Attempts to sweep in the object
-  delay(800);         
-  myservo.write(20);
-  delay(800);
+{
+  
+  int val = 0;     // Value for smooth turning
 
-  Serial.println(i);      // Debug
+  for (int i =0; i < 3;i++) // repeat collection for 3 times
+  {
+    while(val < 80)
+    {
+      val += 1;
+      myservo.write(val);
+      delay(30);
+      Serial.println(val);
+    }
+    delay(800);  
+
+    while (val > 65)
+    {
+      val -= 1;
+      myservo.write(val);
+      delay(30);
+      Serial.println(val);
+    }
+    
+    delay(800);
+    //Serial.println(i);
   }
 }
 
 void drop_off() // Function to drop the object whenever the robot is at the junction facing towards the drop off point
 {
   // IF the robot isn't going forward/backward in a straight enough manner i think we can reduce the speed of it going forward and backward so that its slow enough to where like stuff should hit it off or smth (if rlly bad just change each wheel to spin at different amounts)
+  chassis_currently_moving = true;
 
-  
-  // robot enters the site, initially facing the site
-  
   unsigned long startTime=millis();     // Variable to store the start time
   unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
   while(millis() - startTime < runDuration);
@@ -30,24 +45,26 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
     chassis_forward();
   }
 
-    ml -> run(RELEASE);
-    mr -> run(RELEASE);
-
-  //robot drops the object
-  
-    myservo.write(-20);     // Spinning the Servos to push the waste out of the catchment     
+    
+    myservo.write(105);     // Spinning the Servos to push the waste out of the catchment 
+    delay(700);     // Pushout        
     myservo.write(80);      // Back to initial
 
     delay(15);
 
-  //robot returns to initial position with the same orientation
+
+  startTime=millis();     // Variable to store the start time
+  runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
   while(millis() - startTime < runDuration);
   {
     chassis_backward();
   }
 
-    ml -> run(RELEASE);
-    mr -> run(RELEASE);
+  ml -> run(RELEASE);
+  mr -> run(RELEASE);
+
+  chassis_currently_moving = false;
+
 }
 
 void object_detection()
@@ -56,6 +73,8 @@ void object_detection()
   int svr1 = digitalRead(sr1);
 
   //while the chassis is on the line
+
+  chassis_currently_moving = true;
   
   chassis_backward();
   delay(2000);
@@ -66,6 +85,8 @@ void object_detection()
   }
 
   delay(500);
+
+  chassis_currently_moving = false;
 
   ml -> run(RELEASE);
   mr -> run(RELEASE);
