@@ -19,49 +19,50 @@ void loop() {
   i = 0;
   phv = digitalRead(phs);
   state = digitalRead(button);
-  if (phv == LOW){
-  Serial.println("pick up");
-  while (i<3) // repeat collection for 5 times
+  if (phv == LOW)
   {
-  while(val < 80)
-  {
-  val += 1;
-  myservo.write(val);
-  delay(15);
-  Serial.println(val);
-  }
-  delay(800);  
-  while (val > 65)
-  {
-  val -= 1;
-  myservo.write(val);
-  delay(15);
-   Serial.println(val);
-  }
-  
-  delay(800);
-  //Serial.println(i);
-  i += 1;
-  }
+    Serial.println("pick up");
+    while (i<3) // repeat collection for 5 times
+    {
+      while(val < 80)
+      {
+        val += 1;
+        myservo.write(val);
+        delay(15);
+        Serial.println(val);
+      }
+      delay(800);  
+      while (val > 65)
+      {
+        val -= 1;
+        myservo.write(val);
+        delay(15);
+        Serial.println(val);
+      }
+      
+      delay(800);
+      //Serial.println(i);
+      i += 1;
+    }
   }
 
   if (state == HIGH)
   {
-  while (val < 105)
-  {
-  val += 1;
-  myservo.write(val);
-  delay(15);
-   Serial.println(val);
-  }
-  delay(700); // pushout
-  while (val > 80)
-  {
-  val -= 1;
-  myservo.write(val);
-  delay(15);
-   Serial.println(val);
-  }
+    while (val < 105)
+    {
+      val += 1;
+      myservo.write(val);
+      delay(15);
+      Serial.println(val);
+    }
+    delay(700); // pushout
+    while (val > 80)
+    {
+      val -= 1;
+      myservo.write(val);
+      delay(15);
+      Serial.println(val);
+    }
 
   }  // back to initial
   

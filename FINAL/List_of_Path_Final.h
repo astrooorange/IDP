@@ -7,7 +7,7 @@ extern int sl1;
 extern int sr1;
 
 // Declaration of function
-void execute_list(int list[]);
+void execute_list(int list[], int listSize);
 
 
 #endif

@@ -1,17 +1,17 @@
 #include <Arduino.h>
 #include "List_of_Path_Final.h"
-#include "Line_Following_Final.h"  // For functions1; chassis_forward(),chassis_turn_left90(),chassis_turn_right90()
+#include "Line_Following_Final.h"  // For functions: chassis_forward(),chassis_turn_left90(),chassis_turn_right90()
 #include "Servo_Final.h"           // For functions: pick_up(), drop_off()
 #include "Route_of_Chassis_Final.h"        // For the routes
 #include "Light_State_Final.h"        // To update chassis_currently_moving variable for the flashing lights
 
 //this is the function that intakes a list of path
-void execute_list(int list[]) 
+void execute_list(int list[], int listSize) 
 {
   int counter = 0;
-  int listSize = sizeof(list);
+  //int listSize = sizeof(list);            // sizeof() gives the 'byte suze of the pointer 'list' ' wth
 
-  while (counter <= listSize)
+  while (counter < listSize)
   {
 
     int svr = digitalRead(sr);      // Reading all the sensors
@@ -20,6 +20,7 @@ void execute_list(int list[])
     int svr1 = digitalRead(sr1);
     int svl1 = digitalRead(sl1);
 
+    //Can use else if but this works and i feel like it can there is little to no difference so i might as well leave it alone as this is moving perfect
     if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
     {
       chassis_forward();
@@ -91,7 +92,7 @@ void execute_list(int list[])
         chassis_backward();      // To ensure that its behind the juction
         delay(1000);
 
-        ml -> run(RELEASE);     // To stop :P
+        ml -> run(RELEASE);     // To stop wheels
         mr -> run(RELEASE);
         counter += 1;
         break;
@@ -103,11 +104,11 @@ void execute_list(int list[])
         
         if (digitalRead(magnetic_sensor_pin) == HIGH)
         {
-        execute_list(node7_magnetic) ;
+        execute_list(node7_magnetic,4);     // This recursion should be fine - if problem can just make a funciton that just runs afer each execute_list(list) that just reads sensors and executes the list like make a void dropoff_pathing(){ if...}
         }
         else
         {
-        execute_list(node7_nonmagnetic);
+        execute_list(node7_nonmagnetic,6);
         }
         counter += 1;
         break;
