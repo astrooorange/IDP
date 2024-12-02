@@ -9,6 +9,7 @@ extern int magnetic_led;
 extern int not_magnetic_led;
 extern int magnetic_sensor_pin;
 extern bool chassis_currently_moving;
+extern bool holding_object;
 
 // Function declarations
 void magnetic_sensing();

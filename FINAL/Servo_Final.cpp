@@ -31,6 +31,8 @@ void pick_up()
     delay(800);
     //Serial.println(i);
   }
+
+  holding_object = true;
 }
 
 void drop_off() // Function to drop the object whenever the robot is at the junction facing towards the drop off point
@@ -46,11 +48,13 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
   }
 
     
-    myservo.write(105);     // Spinning the Servos to push the waste out of the catchment 
-    delay(700);     // Pushout        
-    myservo.write(80);      // Back to initial
+  myservo.write(105);     // Spinning the Servos to push the waste out of the catchment 
+  delay(700);     // Pushout        
+  myservo.write(80);      // Back to initial
 
-    delay(15);
+  delay(15);
+
+  holding_object = false;
 
 
   startTime=millis();     // Variable to store the start time
