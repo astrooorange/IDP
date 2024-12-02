@@ -3,7 +3,7 @@
 
 #include <TimerOne.h> // To use internal timer
 
-// Pin definitions
+// Declaration of Global Variables
 extern int running_led;
 extern int magnetic_led;
 extern int not_magnetic_led;
@@ -11,7 +11,7 @@ extern int magnetic_sensor_pin;
 extern bool chassis_currently_moving;
 extern bool holding_object;
 
-// Function declarations
+// Declaration of functions
 void magnetic_sensing();
 void toggle_led();
 

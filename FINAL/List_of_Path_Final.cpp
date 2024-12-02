@@ -3,7 +3,7 @@
 #include "Line_Following_Final.h"  // For functions1; chassis_forward(),chassis_turn_left90(),chassis_turn_right90()
 #include "Servo_Final.h"           // For functions: pick_up(), drop_off()
 #include "Route_of_Chassis_Final.h"        // For the routes
-#include "Light_State_Final.h"        // For the chassis_currently_moving variable for the flashing lights
+#include "Light_State_Final.h"        // To update chassis_currently_moving variable for the flashing lights
 
 //this is the function that intakes a list of path
 void execute_list(int list[]) 
@@ -53,16 +53,22 @@ void execute_list(int list[])
       { 
         chassis_forward();
         delay(600);
+        counter += 1;
+        break;
       } 
       
       else if (list[counter] == 1) 
       {
         chassis_turn_left90();
+        counter += 1;
+        break;
       } 
       
       else if (list[counter] == 2) 
       {
         chassis_turn_right90();
+        counter += 1;
+        break;
       } 
       
       /*else if (list[counter] == 3) 
@@ -73,6 +79,8 @@ void execute_list(int list[])
       else if (list[counter] == 4) 
       {
         drop_off();
+        counter += 1;
+        break;
       } 
         
       else if (list[counter] == 6) 
@@ -85,14 +93,15 @@ void execute_list(int list[])
 
         ml -> run(RELEASE);     // To stop :P
         mr -> run(RELEASE);
+        counter += 1;
+        break;
       } 
       
 
       else if (list[counter] == 8) 
       {
-        int magneticOutput = digitalRead(magnetic_sensor_pin);
         
-        if (magneticOutput = HIGH)
+        if (digitalRead(magnetic_sensor_pin) == HIGH)
         {
         execute_list(node7_magnetic) ;
         }
@@ -100,6 +109,8 @@ void execute_list(int list[])
         {
         execute_list(node7_nonmagnetic);
         }
+        counter += 1;
+        break;
       }
 
       else if (list[counter] == 10)     // Turn around 180 degreess (then reverse so its ontop of the junction)
@@ -123,10 +134,12 @@ void execute_list(int list[])
         chassis_currently_moving = false;
 
         delay(5);
+        counter += 1;
+        break;
 
       }
       
-      counter += 1;
+      
       
     }
   }

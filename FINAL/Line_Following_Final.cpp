@@ -1,5 +1,5 @@
 #include "Line_Following_Final.h"
-#include "Light_State_Final.h"
+#include "Light_State_Final.h"      // To update chassis_currently_moving variable for the flashing lights
 
 
 void chassis_forward ()     // Move forward in a straight line
@@ -86,7 +86,7 @@ void chassis_turn_left90()
 {  
   chassis_currently_moving = true;
 
-  ml->setSpeed(62);     // Sets inner wheel to a lower speed
+  ml->setSpeed(60);     // Sets inner wheel to a lower speed
   mr->setSpeed(250);      // Sets outer wheel to a greater speed
   mr->run(FORWARD);     // Starts the wheels to spinnnnn
   ml->run(FORWARD);

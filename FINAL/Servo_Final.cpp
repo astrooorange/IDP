@@ -1,30 +1,30 @@
 #include <Arduino.h>
 #include "Servo_Final.h"
-#include "Line_Following_Final.h"
-#include "List_of_Path_Final.h"
-#include "Light_State_Final.h"
+#include "Line_Following_Final.h"     // For functions1; chassis_forward(),chassis_turn_left90(),chassis_turn_right90()
+#include "List_of_Path_Final.h"     // For the global variables sl1 and sr1
+#include "Light_State_Final.h"      // To update chassis_currently_moving variable for the flashing lights
 
 void pick_up()
 {
   
-  int val = 0;     // Value for smooth turning
+  int val = 0;     // Value to help rotate the servo smoothly
 
-  for (int i =0; i < 3;i++) // repeat collection for 3 times
+  for (int i =0; i < 3;i++)     // Repeat collection 3 times
   {
-    while(val < 80)
+    while(val < 80)     // Sweeping back to horizontal
     {
       val += 1;
       myservo.write(val);
-      delay(30);
+      delay(15);
       Serial.println(val);
     }
     delay(800);  
 
-    while (val > 65)
+    while (val > 65)      // Sweeping the object into the basket
     {
       val -= 1;
       myservo.write(val);
-      delay(30);
+      delay(15);
       Serial.println(val);
     }
     
@@ -35,11 +35,12 @@ void pick_up()
   holding_object = true;
 }
 
-void drop_off() // Function to drop the object whenever the robot is at the junction facing towards the drop off point
+void drop_off()     // Function to drop the object whenever the robot is at the junction facing towards the drop off point
 {
-  // IF the robot isn't going forward/backward in a straight enough manner i think we can reduce the speed of it going forward and backward so that its slow enough to where like stuff should hit it off or smth (if rlly bad just change each wheel to spin at different amounts)
+
   chassis_currently_moving = true;
 
+  // Move Robot down to the drop off point
   unsigned long startTime=millis();     // Variable to store the start time
   unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
   while(millis() - startTime < runDuration);
@@ -47,16 +48,32 @@ void drop_off() // Function to drop the object whenever the robot is at the junc
     chassis_forward();
   }
 
-    
-  myservo.write(105);     // Spinning the Servos to push the waste out of the catchment 
+  
+  int val = 65      // From the pickup function and is used for the smooth rotation of the servo 
+
+  // The actual code that pushes the waste off
+  while (val < 105)     // Spinning the Servos to push the waste out of the catchment smoothly
+  {
+    val += 1;
+    myservo.write(val);
+    delay(15);
+    Serial.println(val);
+  }
   delay(700);     // Pushout        
-  myservo.write(80);      // Back to initial
+  
+  while (val > 80)      // Smooth push back to initial
+  {
+    val -= 1;
+    myservo.write(val);
+    delay(15);
+    //Serial.println(val);
+  }
 
   delay(15);
 
   holding_object = false;
 
-
+  // Reverses the robot back to the junction
   startTime=millis();     // Variable to store the start time
   runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
   while(millis() - startTime < runDuration);
@@ -88,7 +105,7 @@ void object_detection()
     chassis_forward();
   }
 
-  delay(500);
+  delay(500);     // So once the object is detected to move it into good grabbing distance for the sweeper
 
   chassis_currently_moving = false;
 

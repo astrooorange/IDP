@@ -5,7 +5,7 @@
 #include "Light_State_Final.h"
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
-#include <TimerOne.h> 
+#include <TimerOne.h>
 
 Servo myservo;  // Create servo object to control a servo
 
@@ -30,7 +30,7 @@ Adafruit_DCMotor *mr = AFMS.getMotor(3);      // Setting up motors M3, M4
 Adafruit_DCMotor *ml = AFMS.getMotor(4);
 
 int forward_speedL = 220;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
-int forward_speedR = 210;
+int forward_speedR = 215;
 int backward_speed = 150;
 
 
@@ -60,13 +60,14 @@ void setup()
   Serial.println("Motor Shield found.");
 
 
+
   while (digitalRead(button_pin) == LOW) // Code only starts once the button is pressed
   {}
 
   myservo.write(80);      // Adjust the intial position of the Servo to be at this amount
 
   // Interrupts stuff for the flashing light
-  Timer1.initialize(500000); // Set timer to overflow every 0.5 seconds
+  Timer1.initialize(50000); // Set timer to overflow every 0.5 seconds
   Timer1.attachInterrupt(toggle_led);  // Attach the interrupt function to Timer1
 
 }

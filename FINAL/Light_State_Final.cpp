@@ -1,7 +1,7 @@
 #include "Light_State_Final.h"
-#include <Arduino.h> // Necessary for Arduino functions like pinMode, digitalWrite, etc.
+#include <Arduino.h>
 
-int running_led = 2;         
+int running_led = 2;      // Defining Pins       
 int magnetic_led = 3;         
 int not_magnetic_led = 4;     
 bool chassis_currently_moving = false ;      // To state whether the chassis is moving or not so to turn on the running led
@@ -12,25 +12,25 @@ void magnetic_sensing() {
 
     if (digitalRead(magnetic_sensor_pin) == HIGH) 
     {
-        digitalWrite(not_magnetic_led, HIGH); 
-        digitalWrite(magnetic_led, LOW);  // Turn on magnetic waste LED
+        digitalWrite(magnetic_led, HIGH);     // Turn on magnetic waste LED
+        digitalWrite(not_magnetic_led, LOW);  
     } 
     else 
     {
-        digitalWrite(magnetic_led, HIGH); 
-        digitalWrite(not_magnetic_led, LOW);  // Turn on non-magnetic waste LED
+        digitalWrite(not_magnetic_led, HIGH);     // Turn on non-magnetic waste LED
+        digitalWrite(magnetic_led, LOW);  
     }
 }
 
 
 void toggle_led() {
-    // Toggle the running LED
-    if (chassis_currently_moving == true)
-    {
-      digitalWrite(running_led, !digitalRead(running_led));
-    }
     
-    if (holding_object == true)
+    //if (chassis_currently_moving == false)     // To only flash the running LED when the robot is moving
+    //{
+    digitalWrite(running_led, !digitalRead(running_led));// Toggle the running LED
+    //}
+
+    if (holding_object == true)     // To only show magnetic/non magnetic lights when the object is in the basket
     {
       magnetic_sensing();
     }

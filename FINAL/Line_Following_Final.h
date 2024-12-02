@@ -4,7 +4,7 @@
 #include <Adafruit_MotorShield.h>
 
 
-// Declare global variables
+// Declaration of global variables
 extern int forward_speedL;
 extern int forward_speedR;
 extern int backward_speed;
@@ -13,12 +13,12 @@ extern int sl;
 extern int sm;
 
 
-// Declare motors
+// Declaring motors
 extern Adafruit_DCMotor* ml;
 extern Adafruit_DCMotor* mr;
 
-// Declare your functions here
-void chassis_forward(); // Example function declaration
+// Declaration of functions
+void chassis_forward();
 void chassis_backward();
 void chassis_turn_left();
 void chassis_turn_right();

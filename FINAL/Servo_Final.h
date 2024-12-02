@@ -6,12 +6,11 @@
 // Declaring the Servo 
 extern Servo myservo;  
 
-// Declaring Global Variables
+// Declaration of Global Variables
 extern int pe_sensor_pin;
-/*extern int sl1;
-extern int sr1;*/
 
-// Declaring Functions
+
+// Declaration of Functions
 void pick_up();
 void drop_off();
 void object_detection();

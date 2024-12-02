@@ -1,7 +1,7 @@
 #include "Route_of_Chassis_Final.h"
 
 // Global arrays for storing object paths
-int object1[] = {6, 1, 2, 0, 2, 8};
+int object1[] = {6,1,2,2,1,0,1,10,8};      //{6, 1, 2, 0, 2, 8};
 int object2[] = {6, 2, 2, 2, 8};
 int object3[] = {1, 6, 1, 1, 0, 10, 8};
 int object4[] = {1, 2, 2, 6, 0, 2, 0, 2, 8};
