@@ -25,8 +25,8 @@ void magnetic_sensing() {
 
 
 void toggle_led() {
-    Serial.println("The interuptts are working! PLease ??")
-    if (chassis_currently_moving == false)     // To only flash the running LED when the robot is moving
+    Serial.println("The interuptts are working! PLease ??");
+    if (chassis_currently_moving == true)     // To only flash the running LED when the robot is moving
     {
     digitalWrite(running_led, !digitalRead(running_led));// Toggle the running LED
     }

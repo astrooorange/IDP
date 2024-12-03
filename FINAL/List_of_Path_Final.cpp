@@ -9,7 +9,7 @@
 void execute_list(int list[], int listSize) 
 {
   int counter = 0;
-  //int listSize = sizeof(list);            // sizeof() gives the 'byte suze of the pointer 'list' ' wth
+  //int listSize = sizeof(list);            // sizeof() gives the 'byte size of the pointer 'list' ' wth
 
   while (counter < listSize)
   {

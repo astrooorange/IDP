@@ -6,17 +6,17 @@
 
 void pick_up()
 {
-  
+  int i = 0;
   int val = 0;     // Value to help rotate the servo smoothly
 
-  for (int i =0; i < 3;i++)     // Repeat collection 3 times
+  while(i<3)     // Repeat collection 3 times
   {
     while(val < 80)     // Sweeping back to horizontal
     {
       val += 1;
       myservo.write(val);
       delay(15);
-      Serial.println(val);
+      //Serial.println(val);
     }
     delay(800);  
 
@@ -25,11 +25,12 @@ void pick_up()
       val -= 1;
       myservo.write(val);
       delay(15);
-      Serial.println(val);
+      //Serial.println(val);
     }
     
     delay(800);
     //Serial.println(i);
+    i+=1;
   }
 
   holding_object = true;
@@ -42,14 +43,16 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
 
   // Move Robot down to the drop off point
   unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
-  while(millis() - startTime < runDuration);
+  unsigned long runDuration = 600 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - startTime < runDuration)
   {
     chassis_forward();
   }
 
+  ml -> run(RELEASE);
+  mr -> run(RELEASE);
   
-  int val = 65      // From the pickup function and is used for the smooth rotation of the servo 
+  int val = 65;      // From the pickup function and is used for the smooth rotation of the servo 
 
   // The actual code that pushes the waste off
   while (val < 105)     // Spinning the Servos to push the waste out of the catchment smoothly
@@ -57,7 +60,7 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
     val += 1;
     myservo.write(val);
     delay(15);
-    Serial.println(val);
+    //Serial.println(val);
   }
   delay(700);     // Pushout        
   
@@ -75,8 +78,8 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
 
   // Reverses the robot back to the junction
   startTime=millis();     // Variable to store the start time
-  runDuration = 1800 ;      // Time we want the program to run for (in milliseconds)
-  while(millis() - startTime < runDuration);
+  runDuration = 1200 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - startTime < runDuration)
   {
     chassis_backward();
   }
@@ -98,12 +101,11 @@ void object_detection()
   chassis_currently_moving = true;
   
   chassis_backward();
-  delay(2000);
+  delay(800);
 
+  chassis_forward();
   while(digitalRead(pe_sensor_pin) == false)
-  {
-    chassis_forward();
-  }
+  {}
 
   delay(500);     // So once the object is detected to move it into good grabbing distance for the sweeper
 
