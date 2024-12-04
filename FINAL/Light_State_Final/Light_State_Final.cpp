@@ -5,7 +5,7 @@ bool chassis_currently_moving = false ;      // To state whether the chassis is 
 
 
 void magnetic_sensing() {
-    int magneticOutput = digitalRead(magnetic_sensor_pin); // Read if the magnetic sensor has an output
+    int magneticOutput =HIGH; // Read if the magnetic sensor has an output
 
     if (magneticOutput == HIGH) {
         digitalWrite(not_magnetic_led, HIGH); 
@@ -19,11 +19,11 @@ void magnetic_sensing() {
 
 void toggle_led() {
     // Toggle the running LED
-    if (chassis_currently_moving == true)
-    {
+    
+    
       digitalWrite(running_led, !digitalRead(running_led));
       magnetic_sensing();
-    }
+    
 }
 
 

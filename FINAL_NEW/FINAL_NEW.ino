@@ -6,7 +6,9 @@
 #include "Light_State_Final.h"
 #include <Adafruit_MotorShield.h>
 
-#include <TimerOne.h>
+//#include <TimerOne.h>
+#include <avr/interrupt.h>      // For interrupts for light
+
 
 Servo myservo;  // Create servo object to control a servo
 
@@ -37,8 +39,8 @@ Adafruit_DCMotor *mr = AFMS.getMotor(3);      // Setting up motors M3, M4
 Adafruit_DCMotor *ml = AFMS.getMotor(4);
 
 int forward_speedL = 220;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
-int forward_speedR = 215;
-int backward_speed = 170;
+int forward_speedR = 211;
+int backward_speed = 160;
 
 
 
@@ -79,7 +81,26 @@ void setup()
  // Timer1.initialize(500000); // Set timer to overflow every 0.5 seconds
  // Timer1.attachInterrupt(toggle_led);  // Attach the interrupt function to Timer1
 
+  // ======
+  // Timer2 configuration
+  TCCR2A = 0;                     
+  TCCR2B = 0;                     
+  TCNT2 = 0;                      
+  OCR2A = 15625 / 2 - 1;          
+  TCCR2A |= (1 << WGM21);         
+  TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20); 
+  TIMSK2 |= (1 << OCIE2A);        
+  sei(); 
+  //=====
+
 }
+
+// For toggle_led() function to run for every interrupt
+ISR(TIMER2_COMPA_vect)
+ {
+    toggle_led(); // Call the function from Light_State_Final.cpp
+  }
+
 
 void loop() {
    

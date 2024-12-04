@@ -20,6 +20,64 @@ void execute_list(int list[], int listSize)
     int svr1 = digitalRead(sr1);
     int svl1 = digitalRead(sl1);
 
+    // ====== Remove this if :_( 
+    if (list[counter] == 6)
+      { 
+        object_detection();
+        pick_up();
+
+        // move backward a bit so its back on the line (as it went off the line when getting the block)
+        // Using line following so it goes back fine hopefully :/
+
+        /*
+        forward_speedL = forward_speedL - 50;     // So it moves slower
+        forward_speedR = forward_speedR - 50;
+        */
+
+        unsigned long startTime=millis();     // Variable to store the start time
+        unsigned long runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
+        while((millis() - startTime < runDuration))
+        {
+          svr = digitalRead(sr);      // Reading all the sensors
+          svl = digitalRead(sl);
+          svm = digitalRead(sm);
+
+          if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH) || (svl == LOW && svm == LOW && svr == LOW))     // Go forward - only middle sensor is on the line so it must be going straight
+            {
+              ml->setSpeed(forward_speedL);
+              mr->setSpeed(forward_speedR);
+
+              ml->run(BACKWARD);      //  The wheels start to spin
+              mr->run(BACKWARD);
+              delay(5);
+
+            }
+
+          if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
+            {
+              ml ->setSpeed(forward_speedL - 26);
+              mr ->setSpeed(forward_speedR); 
+
+              ml->run(BACKWARD);      //  The wheels start to spin
+              mr->run(BACKWARD);
+              delay(5);
+            }
+
+          if (svl == LOW && svm == HIGH && svr == HIGH)     // Turn faintly right
+            {
+              ml->setSpeed(forward_speedL);
+              mr->setSpeed(forward_speedR - 32);
+
+              ml->run(BACKWARD);      //  The wheels start to spin
+              mr->run(BACKWARD);
+              delay(5);
+            }
+        }
+
+        counter+= 1;
+      }
+    // ====== Remove this if :_( 
+
     //Can use else if but this works and i feel like it can there is little to no difference so i might as well leave it alone as this is moving perfect
     if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
     {

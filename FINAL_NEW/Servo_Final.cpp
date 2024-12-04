@@ -22,23 +22,25 @@ void pick_up()
 
 
 //myservo.write(80); // 明确设置为初始角度 0°
-  delay(100);
+  delay(10);
   ml->setSpeed(forward_speedL - 100);
   mr->setSpeed(forward_speedR - 100);
 
 
-  mr->run(FORWARD);     // Starts the wheels to spin
-  ml->run(FORWARD);
-
   while(i<1)     // Repeat collection 3 times
   {
-    
+    mr->run(FORWARD);     // So it moves forward a bit then goes to sweep then moves forward then sweeps to ensure its like inside the basket
+    ml->run(FORWARD);
+    delay(100);
+    mr->run(RELEASE);     // So it moves forward a bit then goes to sweep then moves forward then sweeps to ensure its like inside the basket
+    ml->run(RELEASE);
+
     while(val < 80)     // Sweeping back to horizontal
     {
       val += 1;
       myservo.write(val);
       delay(15);
-      Serial.println('now it is turning',val);
+      //Serial.println('now it is turning',val);
     }
     delay(800);  
 
@@ -55,11 +57,8 @@ void pick_up()
     i+=1;
   }
 
-
   holding_object = true;
 
-  ml -> run(RELEASE);
-  mr -> run(RELEASE);
 }
 
 void drop_off()     // Function to drop the object whenever the robot is at the junction facing towards the drop off point
@@ -127,6 +126,82 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
 
 void object_detection()
 {
+
+  //== Hypethetical object_detection() prior one is below if you wanna remove this :) - Also edit execute_list if you want to revert just the top if object == 6 line
+
+  int object_found = digitalRead(pe_sensor_pin);
+  int svr = digitalRead(sr);     
+  int svl = digitalRead(sl);
+  int svm = digitalRead(sm);
+
+  forward_speedL = forward_speedL - 50;     // So it moves slower
+  forward_speedR = forward_speedR - 50;
+
+  while(object_found == LOW)      // Moves forward while not detected the waste so its currently just finding the block
+  {
+    object_found = digitalRead(pe_sensor_pin);
+    svr = digitalRead(sr);     
+    svl = digitalRead(sl);
+    svm = digitalRead(sm);
+
+    
+    // So its just going forward but only like slower and detecting :)
+    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
+    {
+      chassis_forward();       
+    }
+
+    if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
+    {
+      chassis_turn_left();
+    }
+
+    if (svl == LOW && svm == HIGH && svr == HIGH)     // Turn faintly right
+    {
+      chassis_turn_right();
+    }
+
+
+  }
+
+  // So now it should have detected it and its infront
+
+  
+  // This is just s that it continue to move forward for runDuration (0.3 sec)  so that the waste is infront of the grabber, value needs to be changed depending on how far the chassis goes to the box. Alter until perfeclty in it
+  unsigned long startTime=millis();     // Variable to store the start time
+  unsigned long runDuration = 300 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - startTime < runDuration)
+  {
+    svr = digitalRead(sr);     
+    svl = digitalRead(sl);
+    svm = digitalRead(sm);
+
+    
+    // So its just going forward but only like slower and detecting :)
+    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
+    {
+      chassis_forward();       
+    }
+
+    if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
+    {
+      chassis_turn_left();
+    }
+
+    if (svl == LOW && svm == HIGH && svr == HIGH)     // Turn faintly right
+    {
+      chassis_turn_right();
+    }
+  }
+     
+
+  ml -> run(RELEASE);
+  mr -> run(RELEASE);
+
+  forward_speedL = forward_speedL + 50;     // Just fixing the variable so its back to normal
+  forward_speedR = forward_speedR + 50;
+
+  /*
   // //while the chassis is on the line
   // chassis_currently_moving = true;
   
@@ -153,4 +228,8 @@ void object_detection()
 
   ml -> run(RELEASE);
   mr -> run(RELEASE);
+
+
+  */
+
 }
