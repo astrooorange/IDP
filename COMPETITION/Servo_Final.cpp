@@ -10,20 +10,17 @@ void pick_up()
   int val = 78;     // Value to help rotate the servo smoothly
 
 
-
-
-//myservo.write(80); // 明确设置为初始角度 0°
   delay(10);
-  ml->setSpeed(forward_speedL - 100);
+  ml->setSpeed(forward_speedL - 100);     // So it moves forward slowly
   mr->setSpeed(forward_speedR - 100);
 
 
-  while(i<1)     // Repeat collection 3 times
+  while(i<1)     // Opportuninty to repeat collection 
   {
-    mr->run(FORWARD);     // So it moves forward a bit then goes to sweep then moves forward then sweeps to ensure its like inside the basket
+    mr->run(FORWARD);     // So it moves forward a bit then goes to sweep to help get the object inside the basket
     ml->run(FORWARD);
     delay(20);
-    mr->run(RELEASE);     // So it moves forward a bit then goes to sweep then moves forward then sweeps to ensure its like inside the basket
+    mr->run(RELEASE);     
     ml->run(RELEASE);
 
     while(val < 80)     // Sweeping back to horizontal
@@ -31,7 +28,6 @@ void pick_up()
       val += 1;
       myservo.write(val);
       delay(15);
-      //Serial.println('now it is turning',val);
     }
     delay(800);  
 
@@ -40,50 +36,47 @@ void pick_up()
       val -= 1;
       myservo.write(val);
       delay(20);
-      //Serial.println(val);
     }
     
     delay(500);
-    //Serial.println(i);
     i+=1;
   }
 
-  mr->run(RELEASE);     // So it moves forward a bit then goes to sweep then moves forward then sweeps to ensure its like inside the basket
+  mr->run(RELEASE);    
   ml->run(RELEASE);
+
   holding_object = true;
 
+  // Reverses the robot
   ml->setSpeed(114);
   mr->setSpeed(110);
 
-  ml->run(BACKWARD);      //  The wheels start to spin
+  ml->run(BACKWARD);      
   mr->run(BACKWARD);
   delay(1200);   
 
   int svr1 = digitalRead(sr1);
   int svl1 = digitalRead(sl1);
 
-  while ((svl1 == LOW) || (svr1 == LOW))
+  while ((svl1 == LOW) || (svr1 == LOW))      // Drives forward until the next junction (so the next code in the routing path can be ran)
   {
     chassis_forward();
     svr1 = digitalRead(sr1);
     svl1 = digitalRead(sl1);
   }
-
-
 }
 
-void drop_off()     // Function to drop the object whenever the robot is at the junction facing towards the drop off point
+void drop_off()     // Function to drop the object whenever the robot facing towards the drop off point
 {
   int svr1 = digitalRead(sr1);
   int svl1 = digitalRead(sl1);
 
   chassis_currently_moving = false;
-  Serial.println('drop off function is now running!!');
 
   ml -> run(RELEASE);
   mr -> run(RELEASE);
   
-  int val = 65;      // From the pickup function and is used for the smooth rotation of the servo 
+  int val = 65;      // Used for the smooth rotation of the servo 
 
   // The actual code that pushes the waste off
   while (val < 105)     // Spinning the Servos to push the waste out of the catchment smoothly
@@ -99,44 +92,33 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
     val -= 1;
     myservo.write(val);
     delay(15);
-    //Serial.println(val);
   }
 
   delay(15);
 
   holding_object = false;
 
-  // unsigned long startTime=millis();     // Variable to store the start time
-  // unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
-  // while(millis() - startTime < runDuration)
-  // {
-  //   chassis_backward();
-  // }
-
-  //chassis_backward();
-
   int svr = digitalRead(sr);      // Reading all the sensors
   int svl = digitalRead(sl);
   int svm = digitalRead(sm);
 
-  while ((svl1 == LOW) || (svr1 == LOW))
+  while ((svl1 == LOW) || (svr1 == LOW))      // To get the robot to get back to the junction while doing some line following to stay on track
   {
+    // Reading all the sensors
     svr1 = digitalRead(sr1);
     svl1 = digitalRead(sl1);
-
-    svr = digitalRead(sr);      // Reading all the sensors
+    svr = digitalRead(sr);     
     svl = digitalRead(sl);
     svm = digitalRead(sm);
 
-    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH) || (svl == LOW && svm == LOW && svr == LOW))     // Go forward - only middle sensor is on the line so it must be going straight
+    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH) || (svl == LOW && svm == LOW && svr == LOW))     // Go Backward
       {
         ml->setSpeed(forward_speedL);
         mr->setSpeed(forward_speedR);
 
-        ml->run(BACKWARD);      //  The wheels start to spin
+        ml->run(BACKWARD);      //  The wheels start to spin backwards
         mr->run(BACKWARD);
         delay(5);
-
       }
 
     if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
@@ -144,7 +126,7 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
         ml ->setSpeed(forward_speedL - 26);
         mr ->setSpeed(forward_speedR); 
 
-        ml->run(BACKWARD);      //  The wheels start to spin
+        ml->run(BACKWARD);      //  The wheels start to spin backwards
         mr->run(BACKWARD);
         delay(5);
       }
@@ -154,38 +136,25 @@ void drop_off()     // Function to drop the object whenever the robot is at the 
         ml->setSpeed(forward_speedL);
         mr->setSpeed(forward_speedR - 32);
 
-        ml->run(BACKWARD);      //  The wheels start to spin
+        ml->run(BACKWARD);      //  The wheels start to spin backwards
         mr->run(BACKWARD);
         delay(5);
       }
   }
 
-  // unsigned long startTime=millis();     // Variable to store the start time
-  // unsigned long runDuration = 500 ;      // Time we want the program to run for (in milliseconds)
-  // while(millis() - startTime < runDuration)
-  // {
-  //   chassis_backward();
-  // }
-
   ml -> run(RELEASE);
   mr -> run(RELEASE);
 
   chassis_currently_moving = false;
-
 }
 
-void object_detection()
+void object_detection()     // Function finds the object and alligns the robot to be in range to pick it up
 {
-
-  //== Hypethetical object_detection() prior one is below if you wanna remove this :) - Also edit execute_list if you want to revert just the top if object == 6 line
-
   int object_found = digitalRead(pe_sensor_pin);
   int svr = digitalRead(sr);     
   int svl = digitalRead(sl);
   int svm = digitalRead(sm);
 
-  //forward_speedL = forward_speedL - 50;     // So it moves slower
-  //forward_speedR = forward_speedR - 50;
 
   while(object_found == HIGH)      // Moves forward while not detected the waste so its currently just finding the block
   {
@@ -195,8 +164,8 @@ void object_detection()
     svm = digitalRead(sm);
 
     
-    // So its just going forward but only like slower and detecting :)
-    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
+    // So its just going forward but at a slower pace and detecting :)
+    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward
     {
       ml->setSpeed(forward_speedL - 50);
       mr->setSpeed(forward_speedR - 50);
@@ -229,20 +198,18 @@ void object_detection()
 
   }
 
-  // So now it should have detected it and its infront
+  // So now it should have detected it and its infront so move forward a bit 
 
   
-  // This is just s that it continue to move forward for runDuration (0.3 sec)  so that the waste is infront of the grabber, value needs to be changed depending on how far the chassis goes to the box. Alter until perfeclty in it
-  unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
-  while(millis() - startTime < runDuration)
+  unsigned long start_time=millis();     // Variable to store the start time
+  unsigned long run_duration = 1000 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - start_time < run_duration)
   {
     svr = digitalRead(sr);     
     svl = digitalRead(sl);
     svm = digitalRead(sm);
 
     
-    // So its just going forward but only like slower and detecting :)
     if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
     {
       chassis_forward();       
@@ -262,37 +229,5 @@ void object_detection()
 
   ml -> run(RELEASE);
   mr -> run(RELEASE);
-
-
-  /*
-  // //while the chassis is on the line
-  // chassis_currently_moving = true;
-  
-  chassis_backward();
-  delay(30);
-
-  int object_found = digitalRead(pe_sensor_pin);
-
-
-  while(object_found == LOW)
-  {
-    Serial.println("This is pe sensor -> ");
-    Serial.print(object_found);
-    ml->setSpeed(forward_speedL - 30);
-    mr->setSpeed(forward_speedR - 30);
-    mr->run(FORWARD);     // Starts the wheels to spin
-    ml->run(FORWARD);
-    object_found = digitalRead(pe_sensor_pin);
-  }
-
-  delay(600);
-
-  chassis_currently_moving = false;
-
-  ml -> run(RELEASE);
-  mr -> run(RELEASE);
-
-
-  */
 
 }

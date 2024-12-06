@@ -118,7 +118,7 @@ void chassis_turn_right90()
   delay(5);
 }
 
-void get_me_out_of_the_starting_box()
+void get_me_out_of_the_starting_box()     // This function simply gets the robot out of the inital starting area so it can then continue with the line following after that
 {
   chassis_currently_moving = true;
 
@@ -134,21 +134,21 @@ void get_me_out_of_the_starting_box()
     }
 }
 
-void get_me_into_the_starting_box()
+void get_me_into_the_starting_box()     // Gets back into starting area
 {
   chassis_currently_moving = true;
-  //enters the box
+  // Enters the box
   chassis_forward();
 
-  //move for 1s
-  unsigned long startTime=millis();     // Variable to store the start time
-  unsigned long runDuration = 1000 ;      // Time we want the program to run for (in milliseconds)
-  while(millis() - startTime < runDuration);
+  // Move for 1s
+  unsigned long start_time=millis();     // Variable to store the start time
+  unsigned long run_duration = 1000 ;      // Time we want the program to run for (in milliseconds)
+  while(millis() - start_time < run_duration);
   {
     chassis_forward();
   }
 
-  //stop moving
+  // Stop moving
   ml->run(RELEASE);
   mr->run(RELEASE);     // Starts the wheels to spinnnnn
 

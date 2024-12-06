@@ -7,7 +7,7 @@ bool holding_object = false;      // To state if we are holding the object to st
 
 void magnetic_sensing() {
 
-    if (holding_object == true)
+    if (holding_object == true)     // Only runs when an object is being helt
     {
       if (digitalRead(magnetic_sensor_pin) == HIGH) 
       {
@@ -25,11 +25,10 @@ void magnetic_sensing() {
 
 
 void toggle_led() {
-   // Serial.println("The interuptts are working! PLease ??");
+
     if (chassis_currently_moving == true)     // To only flash the running LED when the robot is moving
     {
-      digitalWrite(running_led, !digitalRead(running_led));// Toggle the running LED
-      //Serial.println("Fliop the light??");
+      digitalWrite(running_led, !digitalRead(running_led));     // Toggle the running LED
     }
 
     if (holding_object == true)     // To only show magnetic/non magnetic lights when the object is in the basket

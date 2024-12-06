@@ -11,7 +11,7 @@ extern int magnetic_sensor_pin;
 extern bool chassis_currently_moving;
 extern bool holding_object;
 
-// Declaration of functions
+// Declaration of Functions
 void magnetic_sensing();
 void toggle_led();
 

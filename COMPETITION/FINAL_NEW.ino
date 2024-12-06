@@ -12,9 +12,10 @@
 
 Servo myservo;  // Create servo object to control a servo
 
-int running_led = 2;      // Defining Pins       
-int magnetic_led = 3;         
-int not_magnetic_led = 4; 
+// Defining Pins
+int running_led = 2;      // Pin for the flashing blue light        
+int magnetic_led = 3;     // Pin for the red light to show that a magnetic object was picked up         
+int not_magnetic_led = 4;     // Pin for the green light that activates when a non magnetic object is picked up 
 int sl1 = 5;  // Pin for  top left sensor
 int sl = 6;    // Pin for left sensor  (of the three in a row)
 int sm = 7;   // Pin for middle sensor  (of the three)
@@ -38,7 +39,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();     // Setting up MotorShiel
 Adafruit_DCMotor *mr = AFMS.getMotor(3);      // Setting up motors M3, M4
 Adafruit_DCMotor *ml = AFMS.getMotor(4);
 
-int forward_speedL = 220;  // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
+int forward_speedL = 220;     // Default values of motor //might want to change this back up if time to complete the path is a problem and reduce this value if line following is really bad
 int forward_speedR = 211;
 int backward_speed = 160;
 
@@ -46,7 +47,7 @@ int timer_counter=0;
 
 void setup()
 { 
-  pinMode(running_led,OUTPUT);     // Forgot to intialise the lights 0.0
+  pinMode(running_led,OUTPUT);      // Just setting up all the pins
   pinMode(magnetic_led,OUTPUT);
   pinMode(not_magnetic_led,OUTPUT);
   pinMode(sl1,INPUT);
@@ -60,30 +61,25 @@ void setup()
   pinMode(magnetic_sensor_pin,INPUT);        //Setting up Magnetic Sensor
   
   
-  Serial.begin(9600);           // Set up Serial library at 9600 bps
+  Serial.begin(9600);     // Set up Serial library at 9600 bps
 
 
 
-  if (!AFMS.begin()) // Setting up Motor Shield
+  if (!AFMS.begin())      // Setting up Motor Shield
   {         
     Serial.println("Could not find Motor Shield. Check wiring.");
     while (1);
   }
   Serial.println("Motor Shield found.");
 
-  myservo.write(80); 
+  myservo.write(80);      // Adjust the intial position of the Servo to be at this amount
 
   while (digitalRead(button_pin) == LOW) // Code only starts once the button is pressed
   {}
-      // Adjust the intial position of the Servo to be at this amount
+     
 
-  // Interrupts stuff for the flashing light
- // Timer1.initialize(500000); // Set timer to overflow every 0.5 seconds
- // Timer1.attachInterrupt(toggle_led);  // Attach the interrupt function to Timer1
-
-  // ======
-  // Timer2 configuration
-  TCCR2A = 0;                     
+  
+  TCCR2A = 0;     // Timer2 configuration                     
   TCCR2B = 0;                     
   TCNT2 = 0;                      
   OCR2A = 124;          
@@ -91,18 +87,18 @@ void setup()
   TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20); 
   TIMSK2 |= (1 << OCIE2A);        
   sei(); 
-  //=====
+
 
 }
 
-// For toggle_led() function to run for every interrupt
-ISR(TIMER2_COMPA_vect)
+
+ISR(TIMER2_COMPA_vect)      // To toggle_led() function to run for every interrupt
  {
     timer_counter += 1;
 
-    if (timer_counter > 30)
+    if (timer_counter > 30)     // Just after some interrupt happen as so that light flashes with 2Hz
     {
-      toggle_led(); // Call the function from Light_State_Final.cpp
+      toggle_led();     // Call the function from Light_State_Final.cpp
       timer_counter = 0;
     }
   }
@@ -116,7 +112,7 @@ void loop() {
 
   unsigned long startTime=millis();     // Variable to store the start time
   unsigned long runDuration = 2000 ;      // Time we want the program to run for (in milliseconds)
-  while((millis() - startTime < runDuration))
+  while((millis() - startTime < runDuration))     // This is some back up code so we can choose what path the robot take by how many times the button is pressed
   {
     if (digitalRead(button_pin) == LOW)
     {
@@ -155,5 +151,6 @@ void loop() {
   }
 
   execute_list(home,4);
+  
   get_me_into_the_starting_box();
 }

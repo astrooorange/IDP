@@ -5,92 +5,29 @@
 #include "Route_of_Chassis_Final.h"        // For the routes
 #include "Light_State_Final.h"        // To update chassis_currently_moving variable for the flashing lights
 
-//this is the function that intakes a list of path
-void execute_list(int list[], int listSize) 
+
+void execute_list(int list[], int listSize)     // This function intakes a list of the path to take and the size of that list, it then follows it
 {
   int counter = 0;
-  //int listSize = sizeof(list);            // sizeof() gives the 'byte size of the pointer 'list' ' wth
 
   while (counter < listSize)
   {
-
     int svr = digitalRead(sr);      // Reading all the sensors
     int svl = digitalRead(sl);
     int svm = digitalRead(sm);
     int svr1 = digitalRead(sr1);
     int svl1 = digitalRead(sl1);
 
-    // ====== Remove this if :_( 
-    if (list[counter] == 6)
+
+    if (list[counter] == 6)     // This is put here so it can start once its past the prior junction and can go along the entire length of the line to find and pickup the block
       { 
         object_detection();
         pick_up();
 
-        // move backward a bit so its back on the line (as it went off the line when getting the block)
-        // Using line following so it goes back fine hopefully :/
-
-        /*
-        forward_speedL = forward_speedL - 50;     // So it moves slower
-        forward_speedR = forward_speedR - 50;
-        */
         chassis_backward();
-        //delay(0);
-
-        /*
-
-        unsigned long startTime=millis();     // Variable to store the start time
-        unsigned long runDuration = 1 ;      // Time we want the program to run for (in milliseconds)
-        while((millis() - startTime < runDuration))
-        {
-          svr = digitalRead(sr);      // Reading all the sensors
-          svl = digitalRead(sl);
-          svm = digitalRead(sm);
-
-          if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH) || (svl == LOW && svm == LOW && svr == LOW))     // Go forward - only middle sensor is on the line so it must be going straight
-            {
-              ml->setSpeed(forward_speedL);
-              mr->setSpeed(forward_speedR);
-
-              ml->run(BACKWARD);      //  The wheels start to spin
-              mr->run(BACKWARD);
-              delay(5);
-
-            }
-
-          if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
-            {
-              ml ->setSpeed(forward_speedL - 26);
-              mr ->setSpeed(forward_speedR); 
-
-              ml->run(BACKWARD);      //  The wheels start to spin
-              mr->run(BACKWARD);
-              delay(5);
-            }
-
-          if (svl == LOW && svm == HIGH && svr == HIGH)     // Turn faintly right
-            {
-              ml->setSpeed(forward_speedL);
-              mr->setSpeed(forward_speedR - 32);
-
-              ml->run(BACKWARD);      //  The wheels start to spin
-              mr->run(BACKWARD);
-              delay(5);
-            }
-        }*/
-
         counter+= 1;
-        // svr1 = digitalRead(sr1);
-        // svl1 = digitalRead(sl1);
-
-        // while ((svl1 == LOW) || (svr1 == LOW))
-        // {
-        //   chassis_forward();
-        //   svr1 = digitalRead(sr1);
-        //   svl1 = digitalRead(sl1);
-        // }
-
       }
-    // ====== Remove this if :_( 
+    
 
     svr = digitalRead(sr);      // Reading all the sensors
     svl = digitalRead(sl);
@@ -98,8 +35,8 @@ void execute_list(int list[], int listSize)
     svr1 = digitalRead(sr1);
     svl1 = digitalRead(sl1);
 
-    //Can use else if but this works and i feel like it can there is little to no difference so i might as well leave it alone as this is moving perfect
-    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
+
+    if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward
     {
       if (list[counter] == 6)
       {
@@ -136,10 +73,10 @@ void execute_list(int list[], int listSize)
       chassis_turn_super_right();
     }
 
-    while ((svl1 == HIGH) || (svr1 == HIGH))
+    while ((svl1 == HIGH) || (svr1 == HIGH))      // So what happens when the robot is at the junction
     {
 
-      if (list[counter] == 0) 
+      if (list[counter] == 0)     // Goes past the junction
       { 
         chassis_forward();
         delay(600);
@@ -147,10 +84,11 @@ void execute_list(int list[], int listSize)
         break;
       } 
       
-      else if (list[counter] == 1) 
+      else if (list[counter] == 1)      // To turn left at the junction 
       {
         chassis_turn_left90();
 
+        // This is so the robot auto-corrects itself if it over turns
         svr = digitalRead(sr);      // Reading all the sensors
         svl = digitalRead(sl);
         svm = digitalRead(sm);
@@ -160,12 +98,10 @@ void execute_list(int list[], int listSize)
           svl = digitalRead(sl);
           svm = digitalRead(sm);
 
-
           mr->setSpeed(180);     // Sets inner wheel to a lower speed
           ml->setSpeed(250);      // Sets outer wheel to a greater speed
           mr->run(FORWARD);     // Starts the wheels to spinnnnn
           ml->run(FORWARD);
-
         }
 
         ml->run(RELEASE);
@@ -176,8 +112,9 @@ void execute_list(int list[], int listSize)
       
       else if (list[counter] == 2) 
       {
-        chassis_turn_right90();
+        chassis_turn_right90();     // To turn left at the junction
 
+        // This is so the robot auto-corrects itself if it over turns
         svr = digitalRead(sr);      // Reading all the sensors
         svl = digitalRead(sl);
         svm = digitalRead(sm);
@@ -187,12 +124,10 @@ void execute_list(int list[], int listSize)
           svl = digitalRead(sl);
           svm = digitalRead(sm);
 
-
           ml->setSpeed(180);     // Sets inner wheel to a lower speed
           mr->setSpeed(250);      // Sets outer wheel to a greater speed
           mr->run(FORWARD);     // Starts the wheels to spinnnnn
           ml->run(FORWARD);
-
         }
 
         ml->run(RELEASE);
@@ -202,26 +137,20 @@ void execute_list(int list[], int listSize)
         break;
       } 
       
-      /*else if (list[counter] == 3) 
-      {
-        pick_up();
-      } */
-      
-      else if (list[counter] == 4) 
+      else if (list[counter] == 4)      // Once at a junction before the drop off point, that drops the waste inside the collection centre
       {
         chassis_turn_right90();
 
-
         // So there is some line following and it can adjust itself
-        unsigned long startTime=millis();     // Variable to store the start time
-        unsigned long runDuration = 1500 ;      // Time we want the program to run for (in milliseconds)
-        while((millis() - startTime < runDuration))
+        unsigned long start_time=millis();     // Variable to store the start time
+        unsigned long run_duration = 1500 ;      // Time we want the program to run for (in milliseconds)
+        while((millis() - start_time < run_duration))
         {
           svr = digitalRead(sr);      // Reading all the sensors
           svl = digitalRead(sl);
           svm = digitalRead(sm);
 
-          if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward - only middle sensor is on the line so it must be going straight
+          if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward 
             {
               chassis_forward();
               delay(5);
@@ -240,40 +169,23 @@ void execute_list(int list[], int listSize)
             }
         }
 
-
         drop_off();
         counter += 1;
         break;
       }   
 
-      /*else if (list[counter] == 6) 
-      {
-
-        object_detection();
-        pick_up(); 
-
-        chassis_backward();      // To ensure that its behind the juction
-        
-
-        delay(500);
-
-        ml -> run(RELEASE);     // To stop wheels
-        mr -> run(RELEASE);
-        counter += 1;
-        break;
-      }*/
-
-      else if (list[counter] == 8) 
-      {
-        
+      else if (list[counter] == 8)      // This is just to detemine which path to drop off the waste 
+      {  
         if (digitalRead(magnetic_sensor_pin) == HIGH)
         {
         execute_list(node7_magnetic,3);     // This recursion should be fine - if problem can just make a funciton that just runs afer each execute_list(list) that just reads sensors and executes the list like make a void dropoff_pathing(){ if...}
         }
+        
         else
         {
         execute_list(node7_nonmagnetic,5);
         }
+      
         counter += 1;
         break;
       }
@@ -303,13 +215,9 @@ void execute_list(int list[], int listSize)
         delay(5);
         counter += 1;
         break;
-
       }
-      
-      
-      
+        
     }
-  
   }
 }
 
