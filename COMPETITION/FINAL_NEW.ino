@@ -22,7 +22,6 @@ int sm = 7;   // Pin for middle sensor  (of the three)
 int sr = 8;  // Pin for right sensor  (of the three in a row)
 int sr1 = 9 ; // Pin for  top right sensor
 int button_pin = 10; // Pin for Button 
-
 int pe_sensor_pin = 12; // Pin for Photoelectric sensor
 int magnetic_sensor_pin = 13;     // Pin for Magnetic sensor
 

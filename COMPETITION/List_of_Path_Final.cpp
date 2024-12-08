@@ -38,21 +38,9 @@ void execute_list(int list[], int listSize)     // This function intakes a list 
 
     if ((svl == LOW && svm == HIGH && svr == LOW) || (svl == HIGH && svm == HIGH && svr == HIGH))     // Go forward
     {
-      if (list[counter] == 6)
-      {
-        ml->setSpeed(forward_speedL - 85);
-        mr->setSpeed(forward_speedR - 85);
-
-        mr->run(FORWARD);     // Starts the wheels to spin
-        ml->run(FORWARD);
-      }
-      else{
-       chassis_forward(); 
-      } 
-      
-    }
-
-
+      chassis_forward(); 
+    }   
+    
     if (svl == HIGH && svm == HIGH && svr == LOW)   // Turn fainlty left
     {
       chassis_turn_left();
